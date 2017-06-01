@@ -33,12 +33,12 @@ public class MoveCamera : MonoBehaviour
 
     public void Near()
     {
-
+        myCamera.fieldOfView -= 2;
     }
 
     public void Far()
     {
-
+        myCamera.fieldOfView += 2;
     }
 
 
