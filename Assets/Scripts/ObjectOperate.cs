@@ -11,17 +11,24 @@ public enum Direction
 
 public class ObjectOperate : MonoBehaviour
 {
-    private void Start()
+    public MainUI mainUI;
+    void InitArrow(Transform theTarget)
     {
-        Vector3 spawnVector = targetObj.position;
-        spawnVector.x += 14;
-        spawnVector.y += 10;
-        spawnVector.z += 18;
-        arrowObj.position = spawnVector;
+        if (theTarget)
+        {
+            targetObj = theTarget;
+            theDirection = Direction.Tdefault;
+            Vector3 spawnVector = targetObj.position;
+            spawnVector.x += 14;
+            spawnVector.y += 10;
+            spawnVector.z += 18;
+            arrowObj.position = spawnVector;
+            arrowObj.gameObject.SetActive(true);
+        }
     }
 
 
-    public Transform targetObj;
+    Transform targetObj;
     public Transform arrowObj;
     float preMouseX = 0;
     float preMouseY = 0;
@@ -53,6 +60,15 @@ public class ObjectOperate : MonoBehaviour
                 {
                     preMouseZ = mousePosition.y;
                     theDirection = Direction.ForwardBack;
+                }
+                else if (hit.transform.CompareTag("jiaju"))
+                {
+                    InitArrow(hit.transform);
+                    mainUI.InitObjectData(hit.transform);
+                }
+                else
+                {
+                    //arrowObj.gameObject.SetActive(false);
                 }
             }
         }
