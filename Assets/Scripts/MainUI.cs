@@ -2,29 +2,42 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using LitJson;
 
-class Goods
+public class Goods
 {
-    public Sprite sprite;
+    public string id;
+    public string spriteName;
     public string name;
-    public float price;
+    public string home;
     public string prefabName;
-}
-
-enum GoodsType
-{
-    TDefault = 0,
-    Wall = 1,
-    Ceil = 2
+    public string chang;
+    public string kuan;
+    public string gao;
 }
 
 public class MainUI : MonoBehaviour
 {
+    public ObjectOperate objectOperate;
 
-    public Button deleteBtn;
+    public Button showBtn;
+    public GameObject operationBtns;
+    public GameObject SelectRoomPanel;
+    public GameObject AddGoodsPanel;
+    public Button changeRoomBtn;
+    public Button addGoodsBtn;
+
+    public GameObject operateObjPanel;
+    public GameObject setParamPanel;
+
+    public GameObject showGoodDetailPanel;
+
     public Button moveBtn;
     public Button rotateBtn;
     public Button scaleBtn;
+    public Button deleteBtn;
+    public Button showGoodDetailBtn;
+
 
     public Button changReduce;
     public Button changAdd;
@@ -51,9 +64,29 @@ public class MainUI : MonoBehaviour
     public Button zAdd;
     public InputField zInputField;
 
+    public Button xRotateReduce;
+    public Button xRotateAdd;
+    public InputField xRotateInputField;
+
+    public Button yRotateReduce;
+    public Button yRotateAdd;
+    public InputField yRotateInputField;
+
+
+    public Button zRotateReduce;
+    public Button zRotateAdd;
+    public InputField zRotateInputField;
+
+
+    Dictionary<string, List<Goods>> goodsDic = new Dictionary<string, List<Goods>>();
     private void Start()
     {
+        EventTriggerListener.Get(showBtn.gameObject).onClick = ShowBtns;
+        EventTriggerListener.Get(changeRoomBtn.gameObject).onClick = onChangeRoomPanel;
+        EventTriggerListener.Get(addGoodsBtn.gameObject).onClick = onAddGoodsPanel;
+
         EventTriggerListener.Get(deleteBtn.gameObject).onClick = DeleteObject;
+        EventTriggerListener.Get(showGoodDetailBtn.gameObject).onClick = ShowGoodDetailObject;
         EventTriggerListener.Get(moveBtn.gameObject).onClick = MoveObject;
         EventTriggerListener.Get(rotateBtn.gameObject).onClick = RotateObject;
         EventTriggerListener.Get(scaleBtn.gameObject).onClick = ScaleObject;
@@ -72,40 +105,92 @@ public class MainUI : MonoBehaviour
         EventTriggerListener.Get(zReduce.gameObject).onClick = ReduceZ;
         EventTriggerListener.Get(zAdd.gameObject).onClick = AddZ;
 
-        changInputField.onValueChanged.AddListener(ChangOnValueChanged);
-        kuanInputField.onValueChanged.AddListener(KuanOnValueChanged);
-        gaoInputField.onValueChanged.AddListener(GaoOnValueChanged);
+        EventTriggerListener.Get(xRotateReduce.gameObject).onClick = ReduceRotateX;
+        EventTriggerListener.Get(xRotateAdd.gameObject).onClick = AddRotateX;
+        EventTriggerListener.Get(yRotateReduce.gameObject).onClick = ReduceRotateY;
+        EventTriggerListener.Get(yRotateAdd.gameObject).onClick = AddRotateY;
+        EventTriggerListener.Get(zRotateReduce.gameObject).onClick = ReduceRotateZ;
+        EventTriggerListener.Get(zRotateAdd.gameObject).onClick = AddRotateZ;
 
-        xInputField.onValueChanged.AddListener(XOnValueChanged);
-        yInputField.onValueChanged.AddListener(YOnValueChanged);
-        zInputField.onValueChanged.AddListener(ZOnValueChanged);
+        changInputField.onEndEdit.AddListener(ChangOnEndEdit);
+        kuanInputField.onEndEdit.AddListener(KuanOnEndEdit);
+        gaoInputField.onEndEdit.AddListener(GaoOnEndEdit);
 
-        for (int i = 0; i < LeftButtonList.Count; i++)
+        xInputField.onEndEdit.AddListener(XOnEndEdit);
+        yInputField.onEndEdit.AddListener(YOnEndEdit);
+        zInputField.onEndEdit.AddListener(ZOnEndEdit);
+
+        xRotateInputField.onEndEdit.AddListener(XRotateOnEndEdit);
+        yRotateInputField.onEndEdit.AddListener(YRotateOnEndEdit);
+        zRotateInputField.onEndEdit.AddListener(ZRotateOnEndEdit);
+
+        TextAsset textAsset = Resources.Load<TextAsset>("goods");
+        string content = textAsset.text;
+        JsonData res = JsonMapper.ToObject(content);
+        if (res != null && res.Count > 0)
         {
-            EventTriggerListener.Get(LeftButtonList[i].gameObject, i).onClick = ShowStore;
-        }
-
-        goodsDic = new Dictionary<GoodsType, List<Goods>>() {
+            for (int i = 0; i < res.Count; i++)
             {
-                GoodsType.Wall,new List<Goods>() {
-                   new Goods(){ sprite = null , name ="wall1", price = 100 ,prefabName = "Wall1" }
-                }
-            },
-            {
-                GoodsType.Ceil,new List<Goods>() {
-                   new Goods(){ sprite = null , name ="floor1", price = 10000 , prefabName = "Wall1" },
-                   new Goods(){ sprite = null , name ="floor2", price = 2000 , prefabName = "Wall1" }
+                JsonData parentJD = res[i];
+                if (parentJD != null && parentJD.Count > 0)
+                {
+                    //存放对应的家具预设的文件夹名称
+                    string DirecName = parentJD["directName"].ToString();
+                    parentJD = parentJD["goods"];
+                    for (int j = 0; j < parentJD.Count; j++)
+                    {
+                        JsonData childJD = parentJD[j];
+                        if (childJD != null)
+                        {
+                            Goods good = new Goods();
+                            good.id = childJD["id"].ToString();
+                            good.name = childJD["name"].ToString();
+                            good.home = childJD["home"].ToString();
+                            good.prefabName = DirecName + "/" + childJD["prefabName"].ToString();
+                            good.spriteName = DirecName + "/" + childJD["spriteName"].ToString();
+                            good.chang = childJD["chang"].ToString();
+                            good.kuan = childJD["kuan"].ToString();
+                            good.gao = childJD["gao"].ToString();
+                            if (goodsDic.ContainsKey(DirecName))
+                            {
+                                goodsDic[DirecName].Add(good);
+                            }
+                            else
+                            {
+                                goodsDic[DirecName] = new List<Goods>() { good };
+                            }
+                        }
+                    }
                 }
             }
+        }
 
-        };
+        List<string> furnitureNames = new List<string>() { "cupboard", "electric", "light", "teatable", "Bedding", "vase", "Mural", "wallpaper" };
+        for (int m = 0; m < TopButtonList.Count; m++)
+        {
+            List<Goods> tt = new List<Goods>();
+            if (m >= 0 && m < furnitureNames.Count)
+            {
+                if (goodsDic.ContainsKey(furnitureNames[m]))
+                {
+                    tt = goodsDic[furnitureNames[m]];
+                }
+            }
+            EventTriggerListener.Get(TopButtonList[m].gameObject, tt).onClick = ShowGoods;
+            if (m == 0)
+            {
+                ShowGoods(TopButtonList[m].gameObject, tt);
+            }
+        }
     }
+
 
     public void InitObjectData(Transform tTarget)
     {
         operateObj = tTarget;
         if (operateObj)
         {
+            setParamPanel.SetActive(true);
             changInputField.text = operateObj.localScale.x.ToString();
             kuanInputField.text = operateObj.localScale.z.ToString();
             gaoInputField.text = operateObj.localScale.y.ToString();
@@ -113,10 +198,17 @@ public class MainUI : MonoBehaviour
             xInputField.text = operateObj.position.x.ToString();
             yInputField.text = operateObj.position.y.ToString();
             zInputField.text = operateObj.position.z.ToString();
+
+            rotateX = 0;
+            rotateY = 0;
+            rotateZ = 0;
+            xRotateInputField.text = "0";
+            yRotateInputField.text = "0";
+            zRotateInputField.text = "0";
         }
     }
 
-    void ChangOnValueChanged(string content)
+    void ChangOnEndEdit(string content)
     {
         if (!string.IsNullOrEmpty(content))
         {
@@ -124,14 +216,18 @@ public class MainUI : MonoBehaviour
             bool isok = float.TryParse(content, out result);
             if (isok)
             {
-                Vector3 scale = operateObj.localScale;
-                scale.x = result;
-                operateObj.localScale = scale;
+                if (result >= 1)
+                {
+                    Vector3 scale = operateObj.localScale;
+                    scale.x = result;
+                    operateObj.localScale = scale;
+                    objectOperate.SetArrowPosition();
+                }
             }
         }
     }
 
-    void KuanOnValueChanged(string content)
+    void KuanOnEndEdit(string content)
     {
         if (!string.IsNullOrEmpty(content))
         {
@@ -139,15 +235,19 @@ public class MainUI : MonoBehaviour
             bool isok = float.TryParse(content, out result);
             if (isok)
             {
-                Vector3 scale = operateObj.localScale;
-                scale.z = result;
-                operateObj.localScale = scale;
+                if (result >= 1)
+                {
+                    Vector3 scale = operateObj.localScale;
+                    scale.z = result;
+                    operateObj.localScale = scale;
+                    objectOperate.SetArrowPosition();
+                }
             }
         }
     }
 
 
-    void GaoOnValueChanged(string content)
+    void GaoOnEndEdit(string content)
     {
         if (!string.IsNullOrEmpty(content))
         {
@@ -155,15 +255,19 @@ public class MainUI : MonoBehaviour
             bool isok = float.TryParse(content, out result);
             if (isok)
             {
-                Vector3 scale = operateObj.localScale;
-                scale.y = result;
-                operateObj.localScale = scale;
+                if (result >= 1)
+                {
+                    Vector3 scale = operateObj.localScale;
+                    scale.y = result;
+                    operateObj.localScale = scale;
+                    objectOperate.SetArrowPosition();
+                }
             }
         }
     }
 
 
-    void XOnValueChanged(string content)
+    void XOnEndEdit(string content)
     {
         if (!string.IsNullOrEmpty(content))
         {
@@ -173,13 +277,14 @@ public class MainUI : MonoBehaviour
             {
                 Vector3 position = operateObj.position;
                 position.x = result;
-                operateObj.position = position;
+                operateObj.localPosition = position;
+                objectOperate.SetArrowPosition();
             }
         }
     }
 
 
-    void YOnValueChanged(string content)
+    void YOnEndEdit(string content)
     {
         if (!string.IsNullOrEmpty(content))
         {
@@ -189,13 +294,14 @@ public class MainUI : MonoBehaviour
             {
                 Vector3 position = operateObj.position;
                 position.y = result;
-                operateObj.position = position;
+                operateObj.localPosition = position;
+                objectOperate.SetArrowPosition();
             }
         }
     }
 
 
-    void ZOnValueChanged(string content)
+    void ZOnEndEdit(string content)
     {
         if (!string.IsNullOrEmpty(content))
         {
@@ -205,19 +311,91 @@ public class MainUI : MonoBehaviour
             {
                 Vector3 position = operateObj.position;
                 position.z = result;
-                operateObj.position = position;
+                operateObj.localPosition = position;
+                objectOperate.SetArrowPosition();
+            }
+        }
+    }
+
+    float rotateX;
+    float rotateY;
+    float rotateZ;
+    void XRotateOnEndEdit(string content)
+    {
+        if (!string.IsNullOrEmpty(content))
+        {
+            float result;
+            bool isok = float.TryParse(content, out result);
+            if (isok)
+            {
+                result = rotateX - result;
+                rotateX -= result;
+                operateObj.Rotate(operateObj.transform.right, result);
+                objectOperate.SetArrowPosition();
             }
         }
     }
 
 
-    public Transform operateObj;
+    void YRotateOnEndEdit(string content)
+    {
+        if (!string.IsNullOrEmpty(content))
+        {
+            float result;
+            bool isok = float.TryParse(content, out result);
+            if (isok)
+            {
+                result = rotateY - result;
+                rotateY -= result;
+                operateObj.Rotate(operateObj.transform.up, result);
+                objectOperate.SetArrowPosition();
+            }
+        }
+    }
+
+
+    void ZRotateOnEndEdit(string content)
+    {
+        if (!string.IsNullOrEmpty(content))
+        {
+            float result;
+            bool isok = float.TryParse(content, out result);
+            if (isok)
+            {
+                print(rotateZ + " = " + result);
+                result = rotateZ - result;
+                rotateZ -= result;
+                operateObj.Rotate(operateObj.transform.forward, result);
+                objectOperate.SetArrowPosition();
+            }
+        }
+    }
+
+
+    Transform operateObj;
     public float distance = 1f;
     void DeleteObject(GameObject go, object param)
     {
         if (operateObj)
         {
-            Destroy(operateObj);
+            Destroy(operateObj.gameObject);
+            operateObjPanel.SetActive(false);
+            setParamPanel.SetActive(false);
+        }
+    }
+
+    void ShowGoodDetailObject(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            GoodInfo goodInfo = operateObj.GetComponent<GoodInfo>();
+            if (goodInfo)
+            {
+                ShowGoodDetail tShowGoodDetail = showGoodDetailPanel.GetComponent<ShowGoodDetail>();
+                Goods tGoods = goodInfo.currentGood;
+                tShowGoodDetail.SetValue(tGoods.name, tGoods.home, tGoods.chang, tGoods.kuan, tGoods.gao);
+                showGoodDetailPanel.SetActive(true);
+            }
         }
     }
 
@@ -236,14 +414,35 @@ public class MainUI : MonoBehaviour
 
     }
 
+    void ShowBtns(GameObject go, object param)
+    {
+        operationBtns.SetActive(!operationBtns.activeSelf);
+    }
+
+    void onChangeRoomPanel(GameObject go, object param)
+    {
+        AddGoodsPanel.SetActive(false);
+        SelectRoomPanel.SetActive(!SelectRoomPanel.activeSelf);
+    }
+
+    void onAddGoodsPanel(GameObject go, object param)
+    {
+        SelectRoomPanel.SetActive(false);
+        AddGoodsPanel.SetActive(!AddGoodsPanel.activeSelf);
+    }
+
     void ReduceChange(GameObject go, object param)
     {
         if (operateObj)
         {
             Vector3 scale = operateObj.localScale;
-            scale.x -= distance;
-            operateObj.localScale = scale;
-            changInputField.text = operateObj.localScale.x.ToString();
+            if (scale.x - distance >= 1)
+            {
+                scale.x -= distance;
+                operateObj.localScale = scale;
+                changInputField.text = operateObj.localScale.x.ToString();
+                objectOperate.SetArrowPosition();
+            }
         }
     }
 
@@ -255,6 +454,7 @@ public class MainUI : MonoBehaviour
             scale.x += distance;
             operateObj.localScale = scale;
             changInputField.text = operateObj.localScale.x.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -263,9 +463,13 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             Vector3 scale = operateObj.localScale;
-            scale.z -= distance;
-            operateObj.localScale = scale;
-            kuanInputField.text = operateObj.localScale.z.ToString();
+            if (scale.z - distance >= 1)
+            {
+                scale.z -= distance;
+                operateObj.localScale = scale;
+                kuanInputField.text = operateObj.localScale.z.ToString();
+                objectOperate.SetArrowPosition();
+            }
         }
     }
 
@@ -277,6 +481,7 @@ public class MainUI : MonoBehaviour
             scale.z += distance;
             operateObj.localScale = scale;
             kuanInputField.text = operateObj.localScale.z.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -285,9 +490,13 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             Vector3 scale = operateObj.localScale;
-            scale.y -= distance;
-            operateObj.localScale = scale;
-            gaoInputField.text = operateObj.localScale.y.ToString();
+            if (scale.y - distance >= 1)
+            {
+                scale.y -= distance;
+                operateObj.localScale = scale;
+                gaoInputField.text = operateObj.localScale.y.ToString();
+                objectOperate.SetArrowPosition();
+            }
         }
     }
 
@@ -299,6 +508,7 @@ public class MainUI : MonoBehaviour
             scale.y += distance;
             operateObj.localScale = scale;
             gaoInputField.text = operateObj.localScale.y.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -310,6 +520,7 @@ public class MainUI : MonoBehaviour
             position.x -= distance;
             operateObj.position = position;
             xInputField.text = operateObj.position.x.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -321,6 +532,7 @@ public class MainUI : MonoBehaviour
             position.x += distance;
             operateObj.position = position;
             xInputField.text = operateObj.position.x.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -332,6 +544,7 @@ public class MainUI : MonoBehaviour
             position.y -= distance;
             operateObj.position = position;
             yInputField.text = operateObj.position.y.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -343,6 +556,7 @@ public class MainUI : MonoBehaviour
             position.y += distance;
             operateObj.position = position;
             yInputField.text = operateObj.position.y.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -354,6 +568,7 @@ public class MainUI : MonoBehaviour
             position.z -= distance;
             operateObj.position = position;
             zInputField.text = operateObj.position.z.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
@@ -365,54 +580,125 @@ public class MainUI : MonoBehaviour
             position.z += distance;
             operateObj.position = position;
             zInputField.text = operateObj.position.z.ToString();
+            objectOperate.SetArrowPosition();
         }
     }
 
+    void ReduceRotateX(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            rotateX -= distance;
+            operateObj.Rotate(operateObj.transform.right, -distance);
+            xRotateInputField.text = rotateX.ToString();
+            objectOperate.SetArrowPosition();
+        }
+    }
+
+    void AddRotateX(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            rotateX += distance;
+            operateObj.Rotate(operateObj.transform.right, distance);
+            xRotateInputField.text = rotateX.ToString();
+            objectOperate.SetArrowPosition();
+        }
+    }
+
+    void ReduceRotateY(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            rotateY -= distance;
+            operateObj.Rotate(operateObj.transform.up, -distance);
+            yRotateInputField.text = rotateY.ToString();
+            objectOperate.SetArrowPosition();
+        }
+    }
+
+    void AddRotateY(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            rotateY += distance;
+            operateObj.Rotate(operateObj.transform.up, distance);
+            yRotateInputField.text = rotateY.ToString();
+            objectOperate.SetArrowPosition();
+        }
+    }
+
+    void ReduceRotateZ(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            rotateZ -= distance;
+            operateObj.Rotate(operateObj.transform.forward, -distance);
+            zRotateInputField.text = rotateZ.ToString();
+            objectOperate.SetArrowPosition();
+        }
+    }
+
+    void AddRotateZ(GameObject go, object param)
+    {
+        if (operateObj)
+        {
+            rotateZ += distance;
+            operateObj.Rotate(operateObj.transform.forward, distance);
+            zRotateInputField.text = rotateZ.ToString();
+            objectOperate.SetArrowPosition();
+        }
+    }
 
     public Transform storeParent;
-    public List<Button> LeftButtonList = new List<Button>();
-    Dictionary<GoodsType, List<Goods>> goodsDic = null;
+    public List<Button> TopButtonList = new List<Button>();
 
 
-    void ShowStore(GameObject go, object data)
+    void ShowGoods(GameObject go, object data)
     {
-        storeParent.parent.gameObject.SetActive(true);
-        int theType = (int)data;
-        if (goodsDic.ContainsKey((GoodsType)theType))
-        {
-            Utils.SpawnCellForTable(storeParent, goodsDic[(GoodsType)theType], SpawnOrUpdate);
-        }
+        List<Goods> list = (List<Goods>)data;
+        Utils.SpawnCellForTable(storeParent, list, SpawnOrUpdate);
     }
 
-    void SpawnOrUpdate(GameObject go, Goods data, bool isSpawn)
+    void SpawnOrUpdate(GameObject go, Goods data, bool isSpawn, int index)
     {
         GameObject cell = go;
         if (isSpawn)
         {
-            Object obj = Resources.Load("StoreCell");
-            cell = Instantiate(obj) as GameObject;
+            Object obj = Resources.Load("SelectGoodCell");
+            if (obj)
+            {
+                cell = Instantiate(obj) as GameObject;
+                cell.transform.parent = go.transform;
+            }
         }
-        StoreCell sc = cell.GetComponent<StoreCell>();
-        sc.InitCell(data.sprite, data.name, data.price.ToString(), data.prefabName);
-        if (isSpawn)
+
+        EventTriggerListener.Get(cell, data).onBeginDrag = (tgo, tdata) =>
         {
-            cell.transform.parent = go.transform;
-        }
-        sc.callback = SpawnObject;
+            Goods tgood = (Goods)tdata;
+            Object obj = Resources.Load<GameObject>(tgood.prefabName);
+            if (obj)
+            {
+                GameObject dragObject = Instantiate(obj) as GameObject;
+                dragObject.transform.localPosition = Vector3.zero;
+                AddGoodsPanel.SetActive(false);
+                objectOperate.canDrag = true;
+                if (objectOperate.targetObj)
+                {
+                    Utils.SetObjectHighLight(objectOperate.targetObj.gameObject, false);
+                }
+                objectOperate.targetObj = dragObject.transform;
+
+                GoodInfo goodInfo = dragObject.GetComponent<GoodInfo>();
+                if (goodInfo == null)
+                {
+                    goodInfo = dragObject.AddComponent<GoodInfo>();
+                }
+                goodInfo.currentGood = tgood;
+                Utils.SetObjectHighLight(dragObject, true);
+            }
+        };
+        cell.GetComponent<Image>().sprite = Resources.Load<Sprite>(data.spriteName);
         cell.SetActive(true);
-    }
-
-    private void SpawnObject(GameObject go, object data, string prefabName)
-    {
-        float x = Screen.width / 2;
-        float y = Screen.height / 2;
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(x, y, 0));
-
-        Object obj = Resources.Load<GameObject>(prefabName);
-        GameObject spawnObj = Instantiate(obj) as GameObject;
-        spawnObj.transform.position = ray.direction;
-        spawnObj.transform.localRotation = Quaternion.identity;
-
-        storeParent.parent.gameObject.SetActive(false);
     }
 }

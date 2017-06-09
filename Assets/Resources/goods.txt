@@ -1,0 +1,87 @@
+{
+  "cupboard": {
+    "directName":"cupboard",
+    "goods":{
+              "1" : {
+                      "id": "1",
+                      "name": "橱柜1",
+                      "home": "无锡橱柜制造有限公司",
+                      "prefabName": "cupboard1",
+                      "spriteName": "cupboard1",
+                      "chang":"100",      
+                      "kuan":"5670",      
+                      "gao":"1020"      
+                    },
+              "2" : {
+                      "id": "2",
+                      "name": "橱柜2",
+                      "home": "南京橱柜制造有限公司",
+                      "prefabName": "cupboard2",
+                      "spriteName": "cupboard2",
+                      "chang":"100",      
+                      "kuan":"1230",      
+                      "gao":"100"            
+                    },
+               "3" : {
+                      "id": "3",
+                      "name": "橱柜3",
+                      "home": "南京橱柜制造有限公司",
+                      "prefabName": "cupboard3",
+                      "spriteName": "cupboard3",
+                      "chang":"100",      
+                      "kuan":"1230",      
+                      "gao":"100"            
+                    }
+      }
+  },
+  "electric": {
+   "directName":"electric",
+    "goods":{
+              "1" : {
+                      "id": "1",
+                      "name": "电器1",
+                      "home": "无锡电器制造有限公司",
+                      "prefabName": "electric1",
+                      "spriteName": "electric1",
+                      "chang":"100",      
+                      "kuan":"1000",      
+                      "gao":"100"            
+                    },
+              "2" : {
+                        "id": "2",
+                        "name": "电器2",
+                        "home": "南京电器制造有限公司",
+                        "prefabName": "electric2",
+                        "spriteName": "electric2",
+                        "chang":"100",      
+                        "kuan":"1000",      
+                        "gao":"100"            
+                      },
+              "3" : {
+                        "id": "3",
+                        "name": "电器3",
+                        "home": "苏州电器制造有限公司",
+                        "prefabName": "electric3",
+                        "spriteName": "electric3",
+                        "chang":"100",      
+                        "kuan":"1000",      
+                        "gao":"100"            
+                      }
+      }
+    },
+  "light": {
+    "directName":"light",
+    "goods":{
+              "1" : {
+                      "id": "1",
+                      "name": "电灯1",
+                      "home": "无锡电器制造有限公司",
+                      "prefabName": "light1",
+                      "spriteName": "light1",
+                      "chang":"200",      
+                      "kuan":"7000",      
+                      "gao":"500"            
+                    }
+      }
+    }
+}
