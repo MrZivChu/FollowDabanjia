@@ -191,6 +191,7 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             setParamPanel.SetActive(true);
+            operateObjPanel.SetActive(true);
             changInputField.text = operateObj.localScale.x.ToString();
             kuanInputField.text = operateObj.localScale.z.ToString();
             gaoInputField.text = operateObj.localScale.y.ToString();
