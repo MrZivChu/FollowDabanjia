@@ -14,6 +14,7 @@ public class RoomInfo : MonoBehaviour
     public List<Room> roomList = new List<Room>() { };
     [HideInInspector]
     public int index = 0;
+    public TouchRawImage touchRawImage;
 
     public void Init()
     {
@@ -89,6 +90,13 @@ public class RoomInfo : MonoBehaviour
         if (hasSpawnObject.ContainsKey(index))
         {
             currentRoom = hasSpawnObject[index];
+            DragRotateZWH dragRotate = currentRoom.GetComponent<DragRotateZWH>();
+            if (dragRotate == null)
+            {
+                dragRotate = currentRoom.AddComponent<DragRotateZWH>();
+            }
+            dragRotate.enabled = false;
+            touchRawImage.dr = dragRotate;
             currentRoom.SetActive(true);
         }
         else
@@ -97,6 +105,13 @@ public class RoomInfo : MonoBehaviour
             if (obj)
             {
                 currentRoom = Instantiate(obj) as GameObject;
+                DragRotateZWH dragRotate = currentRoom.GetComponent<DragRotateZWH>();
+                if (dragRotate == null)
+                {
+                    dragRotate = currentRoom.AddComponent<DragRotateZWH>();
+                }
+                dragRotate.enabled = false;
+                touchRawImage.dr = dragRotate;
                 currentRoom.transform.parent = spawnPosition;
                 currentRoom.transform.localPosition = Vector3.zero;
                 hasSpawnObject[index] = currentRoom;
