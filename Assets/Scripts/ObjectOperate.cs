@@ -177,7 +177,7 @@ public class ObjectOperate : MonoBehaviour
                 RaycastHit hit;
                 Vector3 mousePosition = Input.mousePosition;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 1 << LayerMask.NameToLayer("terrain")))
+                if (Physics.Raycast(ray, out hit, 1000, 1 << LayerMask.NameToLayer("terrain")))
                 {
                     if (hit.transform.CompareTag("terrain"))
                     {

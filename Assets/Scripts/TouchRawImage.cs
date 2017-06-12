@@ -7,7 +7,10 @@ public class TouchRawImage : MonoBehaviour
     float currentDistance = 0;
     public GameObject rawImage;
 
+    public Camera theCamera;
+
     bool isDraging = false;
+    [HideInInspector]
     public DragRotateZWH dr;
     void Start()
     {
@@ -26,6 +29,7 @@ public class TouchRawImage : MonoBehaviour
         };
     }
 
+    float speed = 0.1f;
     void Update()
     {
         if (Input.touchCount > 1 && isDraging)
@@ -35,15 +39,16 @@ public class TouchRawImage : MonoBehaviour
                 Vector3 tempPosition1 = Input.GetTouch(0).position;
                 Vector3 tempPosition2 = Input.GetTouch(1).position;
                 currentDistance = Vector2.Distance(tempPosition1, tempPosition2);
+                float vv = currentDistance * speed;
                 if (currentDistance > preDistance)
                 {
-                    float currentFiledOfView = Camera.main.fieldOfView - 10 < 60 ? 60 : Camera.main.fieldOfView - 10;
-                    Camera.main.fieldOfView = currentFiledOfView;
+                    float currentFiledOfView = Camera.main.fieldOfView - vv < 30 ? 30 : Camera.main.fieldOfView - vv;
+                    theCamera.fieldOfView = currentFiledOfView;
                 }
                 else
                 {
-                    float currentFiledOfView = Camera.main.fieldOfView + 10 > 150 ? 150 : Camera.main.fieldOfView + 10;
-                    Camera.main.fieldOfView = currentFiledOfView;
+                    float currentFiledOfView = Camera.main.fieldOfView + vv > 150 ? 150 : Camera.main.fieldOfView + vv;
+                    theCamera.fieldOfView = currentFiledOfView;
                 }
                 preDistance = currentDistance;
             }
