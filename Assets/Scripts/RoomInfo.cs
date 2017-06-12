@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class RoomInfo : MonoBehaviour
 {
     Dictionary<int, GameObject> hasSpawnObject = new Dictionary<int, GameObject>();
 
+    public GraphicRaycaster personCanvasGraphicRaycaster;
     public Transform spawnPosition;
     public Transform replacePosition;
     public GameObject SelectRoom;
@@ -23,6 +25,7 @@ public class RoomInfo : MonoBehaviour
 
     public void Ok()
     {
+        personCanvasGraphicRaycaster.enabled = true;
         gameObject.SetActive(false);
         SelectRoom.SetActive(false);
         if (currentRoom)

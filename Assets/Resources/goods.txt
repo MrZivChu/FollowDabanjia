@@ -1,48 +1,13 @@
 {
-  "cupboard": {
-    "directName":"cupboard",
-    "goods":{
-              "1" : {
-                      "id": "1",
-                      "name": "橱柜1",
-                      "home": "无锡橱柜制造有限公司",
-                      "prefabName": "cupboard1",
-                      "spriteName": "cupboard1",
-                      "chang":"100",      
-                      "kuan":"5670",      
-                      "gao":"1020"      
-                    },
-              "2" : {
-                      "id": "2",
-                      "name": "橱柜2",
-                      "home": "南京橱柜制造有限公司",
-                      "prefabName": "cupboard2",
-                      "spriteName": "cupboard2",
-                      "chang":"100",      
-                      "kuan":"1230",      
-                      "gao":"100"            
-                    },
-               "3" : {
-                      "id": "3",
-                      "name": "橱柜3",
-                      "home": "南京橱柜制造有限公司",
-                      "prefabName": "cupboard3",
-                      "spriteName": "cupboard3",
-                      "chang":"100",      
-                      "kuan":"1230",      
-                      "gao":"100"            
-                    }
-      }
-  },
-  "electric": {
-   "directName":"electric",
+  "Pillows": {
+   "directName":"Pillows",
     "goods":{
               "1" : {
                       "id": "1",
                       "name": "电器1",
                       "home": "无锡电器制造有限公司",
-                      "prefabName": "electric1",
-                      "spriteName": "electric1",
+                      "prefabName": "Prefabs/Pillow_1",
+                      "spriteName": "Prefabs/Pillow_1",
                       "chang":"100",      
                       "kuan":"1000",      
                       "gao":"100"            
@@ -51,8 +16,8 @@
                         "id": "2",
                         "name": "电器2",
                         "home": "南京电器制造有限公司",
-                        "prefabName": "electric2",
-                        "spriteName": "electric2",
+                        "prefabName": "Prefabs/Pillow_16",
+                        "spriteName": "Prefabs/Pillow_16",
                         "chang":"100",      
                         "kuan":"1000",      
                         "gao":"100"            
@@ -61,27 +26,82 @@
                         "id": "3",
                         "name": "电器3",
                         "home": "苏州电器制造有限公司",
-                        "prefabName": "electric3",
-                        "spriteName": "electric3",
+                        "prefabName": "Prefabs/Pillow_33",
+                        "spriteName": "Prefabs/Pillow_33",
                         "chang":"100",      
                         "kuan":"1000",      
                         "gao":"100"            
                       }
       }
     },
-  "light": {
-    "directName":"light",
+  "KitchenSet": {
+    "directName":"KitchenSet",
     "goods":{
               "1" : {
                       "id": "1",
                       "name": "电灯1",
                       "home": "无锡电器制造有限公司",
-                      "prefabName": "light1",
-                      "spriteName": "light1",
+                      "prefabName": "Prefabs/New_Kitchen/Kitchen_1/Kitchen_SaP",
+                      "spriteName": "Prefabs/New_Kitchen/Kitchen_1/Kitchen_SaP",
                       "chang":"200",      
                       "kuan":"7000",      
                       "gao":"500"            
-                    }
+                    },
+            "2" : {
+                    "id": "1",
+                    "name": "电灯1",
+                    "home": "无锡电器制造有限公司",
+                    "prefabName": "Prefabs/New_Kitchen/Kitchen_1/DishRack",
+                    "spriteName": "Prefabs/New_Kitchen/Kitchen_1/DishRack",
+                    "chang":"200",      
+                    "kuan":"7000",      
+                    "gao":"500"            
+                  },
+            "3" : {
+                    "id": "1",
+                    "name": "电灯1",
+                    "home": "无锡电器制造有限公司",
+                    "prefabName": "Prefabs/New_Kitchen/Kitchen_1/Sink",
+                    "spriteName": "Prefabs/New_Kitchen/Kitchen_1/Sink",
+                    "chang":"200",      
+                    "kuan":"7000",      
+                    "gao":"500"            
+                  }
+      }
+    },
+  "SofaChair": {
+    "directName":"SofaChair",
+    "goods":{
+              "1" : {
+                      "id": "1",
+                      "name": "电灯1",
+                      "home": "无锡电器制造有限公司",
+                      "prefabName": "Prefabs/Amphi_Theater_Bench",
+                      "spriteName": "Prefabs/Amphi_Theater_Bench",
+                      "chang":"200",      
+                      "kuan":"7000",      
+                      "gao":"500"            
+                    },
+            "2" : {
+                    "id": "1",
+                    "name": "电灯1",
+                    "home": "无锡电器制造有限公司",
+                    "prefabName": "Prefabs/ArmChair",
+                    "spriteName": "Prefabs/ArmChair",
+                    "chang":"200",      
+                    "kuan":"7000",      
+                    "gao":"500"            
+                  },
+            "3" : {
+                    "id": "1",
+                    "name": "电灯1",
+                    "home": "无锡电器制造有限公司",
+                    "prefabName": "Prefabs/BarcaLounger",
+                    "spriteName": "Prefabs/BarcaLounger",
+                    "chang":"200",      
+                    "kuan":"7000",      
+                    "gao":"500"            
+                  }
       }
     }
 }
