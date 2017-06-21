@@ -5,22 +5,28 @@ using System.Collections.Generic;
 
 public class Utils : MonoBehaviour
 {
-    public static void SetObjectHighLight(GameObject go, bool isLight)
+    public static void SetObjectHighLight(GameObject go, bool isLight, Color color)
     {
         if (isLight)
         {
+            Color lightColor = color;
+            if (lightColor == Color.clear)
+            {
+                lightColor = new Color(1, 248f / 255, 0, 1);
+            }
             FlashingController flashingController = go.GetComponent<FlashingController>();
             if (flashingController == null)
             {
                 flashingController = go.AddComponent<FlashingController>();
                 flashingController.flashingDelay = 0;
                 flashingController.flashingFrequency = 2;
-                flashingController.flashingStartColor = new Color(0, 1, 1, 1);
-                flashingController.flashingEndColor = new Color(0, 1, 1, 1);
             }
+            flashingController.flashingStartColor = lightColor;
+            flashingController.flashingEndColor = lightColor;
             HighlightableObject highlightableObject = go.GetComponent<HighlightableObject>();
             if (highlightableObject)
             {
+                highlightableObject.FlashingParams(lightColor, lightColor, 2);
                 highlightableObject.FlashingOn();
             }
         }
@@ -84,6 +90,45 @@ public class Utils : MonoBehaviour
             for (int i = fuyongCount; i < hasCount; i++)
             {
                 parent.GetChild(i).gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public static void ChangeShaderAlbedo(GameObject target, Texture texture)
+    {
+        MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            Material material = meshRenderer.material;
+            if (material != null)
+            {
+                material.SetTexture("_MainTex", texture);
+            }
+        }
+    }
+
+    public static void ChangeShaderNormalMap(GameObject target, Texture texture)
+    {
+        MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            Material material = meshRenderer.material;
+            if (material != null)
+            {
+                material.SetTexture("_BumpMap", texture);
+            }
+        }
+    }
+
+    public static void ChangeShaderOcclusion(GameObject target, Texture texture)
+    {
+        MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            Material material = meshRenderer.material;
+            if (material != null)
+            {
+                material.SetTexture("_OcclusionMap", texture);
             }
         }
     }

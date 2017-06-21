@@ -61,12 +61,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            RotateView();
-            // the jump state needs to read here to make sure it is not missed
-            if (!m_Jump)
+            //todo:添加限制只能一直按着鼠标右键才能旋转屏幕
+            if (Input.GetMouseButton(1))
             {
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                RotateView();
             }
+            // the jump state needs to read here to make sure it is not missed
+            //if (!m_Jump)
+            //{
+            //    m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+            //}
 
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
             {

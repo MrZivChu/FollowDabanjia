@@ -10,55 +10,25 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
-public enum Direction
-{
-    Tdefault = 0,
-    LeftRigth = 1,
-    TopBottom = 2,
-    ForwardBack = 3
-}
 
 public class ObjectOperate : MonoBehaviour
 {
     public MainUI mainUI;
-    void InitArrow(Transform theTarget)
-    {
-        if (theTarget)
-        {
-            targetObj = theTarget;
-            theDirection = Direction.Tdefault;
-            SetArrowPosition();
-            arrowObj.gameObject.SetActive(true);
-        }
-    }
-
-    public void SetArrowPosition()
-    {
-        //if (targetObj)
-        //{
-        //    Vector3 spawnVector = targetObj.position;
-        //    spawnVector.x += 14;
-        //    spawnVector.y += 10;
-        //    spawnVector.z += 18;
-        //    arrowObj.position = spawnVector;
-        //}
-    }
+    public ThreeDOperate threeDOperate;
+    bool canPlace = false;
 
     [HideInInspector]
-    public Transform targetObj;
-    [HideInInspector]
-    public bool canDrag = false;
-    public Transform arrowObj;
-    float preMouseX = 0;
-    float preMouseY = 0;
-    float preMouseZ = 0;
+    public bool canOperate = true;
 
-    Direction theDirection = Direction.Tdefault;
-
-    public float speed = 0.3f;
     void Update()
     {
+        if (!canOperate)
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
 #if IPHONE || ANDROID
@@ -75,115 +45,157 @@ public class ObjectOperate : MonoBehaviour
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.transform.CompareTag("jiaju"))
+                    if (hit.transform.root.CompareTag("jiaju"))
                     {
                         if (targetObj)
                         {
-                            Utils.SetObjectHighLight(targetObj.gameObject, false);
+                            mainUI.tipObject.SetActive(false);
+                            Utils.SetObjectHighLight(targetObj.gameObject, false, Color.clear);
                         }
-                        targetObj = hit.transform;
+                        if (targetObj != hit.transform.root)
+                        {
+                            threeDOperate.index = 0;
+                            if (threeDOperate.current3DObj != null)
+                            {
+                                threeDOperate.current3DObj.gameObject.SetActive(false);
+                            }
+                        }
+                        targetObj = hit.transform.root;
+                        goodInfo = targetObj.GetComponent<GoodInfo>().currentGood;
                         mainUI.InitObjectData(targetObj);
-                        Utils.SetObjectHighLight(targetObj.gameObject, true);
+                        foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+                        {
+                            tran.gameObject.layer = LayerMask.NameToLayer("temp");
+                        }
+                        canDrag = true;
                     }
                 }
             }
-
-            //RaycastHit hit;
-            //Vector3 mousePosition = Input.mousePosition;
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //if (Physics.Raycast(ray, out hit))
-            //{
-            //    //        if (hit.transform.CompareTag("leftright"))
-            //    //        {
-            //    //            preMouseX = mousePosition.x;
-            //    //            theDirection = Direction.LeftRigth;
-            //    //        }
-            //    //        else if (hit.transform.CompareTag("topbottom"))
-            //    //        {
-            //    //            preMouseY = mousePosition.y;
-            //    //            theDirection = Direction.TopBottom;
-            //    //        }
-            //    //        else if (hit.transform.CompareTag("forwardback"))
-            //    //        {
-            //    //            preMouseZ = mousePosition.y;
-            //    //            theDirection = Direction.ForwardBack;
-            //    //        }
-            //    //        else if (hit.transform.CompareTag("jiaju"))
-            //    //        {
-            //    //            InitArrow(hit.transform);
-            //    //            mainUI.InitObjectData(hit.transform);
-            //    //        }
-            //    //        else
-            //    //        {
-            //    //            //arrowObj.gameObject.SetActive(false);
-            //    //        }
-            //}
         }
+
+
         if (Input.GetMouseButtonUp(0))
         {
-            theDirection = Direction.Tdefault;
-            if (targetObj && canDrag)
+            if (canDrag)
             {
-                mainUI.setParamPanel.SetActive(true);
-                mainUI.operateObjPanel.SetActive(true);
-                mainUI.InitObjectData(targetObj);
+                if (canPlace)
+                {
+                    if (goodInfo.goodType == GoodType.spawnObj)
+                    {
+                        mainUI.setParamPanel.SetActive(true);
+                        mainUI.operateObjPanel.SetActive(true);
+                        mainUI.InitObjectData(targetObj);
+                    }
+                    else if (goodInfo.goodType == GoodType.changeImg)
+                    {
+                        Texture t = Resources.Load<Texture>(goodInfo.prefabName);
+                        Utils.ChangeShaderAlbedo(raycastHit, t);
+                        GoodInfo tt = raycastHit.GetComponent<GoodInfo>();
+                        if (tt == null)
+                        {
+                            tt = raycastHit.AddComponent<GoodInfo>();
+                        }
+                        tt.currentGood = goodInfo;
+                    }
+                    if (targetObj != null)
+                    {
+                        foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+                        {
+                            tran.gameObject.layer = LayerMask.NameToLayer("Default");
+                        }
+                    }
+                }
+                else
+                {
+                    if (targetObj)
+                    {
+                        Destroy(targetObj.gameObject);
+                    }
+                    mainUI.setParamPanel.SetActive(false);
+                    mainUI.operateObjPanel.SetActive(false);
+                }
+                if (raycastHit != null)
+                {
+                    Utils.SetObjectHighLight(raycastHit, false, Color.clear);
+                }
                 canDrag = false;
+                textureBG = null;
+                raycastHit = null;
+                goodInfo = null;
+                mainUI.tipObject.SetActive(false);
             }
         }
         if (Input.GetMouseButton(0))
         {
-            //if (theDirection == Direction.LeftRigth)
-            //{
-            //    float nowMouseX = Input.mousePosition.x;
-            //    float distance = nowMouseX - preMouseX;
-            //    preMouseX = nowMouseX;
-            //    Vector3 vv = targetObj.position;
-            //    vv.x += distance * speed;
-            //    targetObj.position = vv;
-
-            //    vv = arrowObj.position;
-            //    vv.x += distance * speed;
-            //    arrowObj.position = vv;
-            //}
-            //else if (theDirection == Direction.TopBottom)
-            //{
-            //    float nowMouseY = Input.mousePosition.y;
-            //    float distance = nowMouseY - preMouseY;
-            //    preMouseY = nowMouseY;
-            //    Vector3 vv = targetObj.position;
-            //    vv.y += distance * speed;
-            //    targetObj.position = vv;
-
-            //    vv = arrowObj.position;
-            //    vv.y += distance * speed;
-            //    arrowObj.position = vv;
-            //}
-            //else if (theDirection == Direction.ForwardBack)
-            //{
-            //    float nowMouseZ = Input.mousePosition.y;
-            //    float distance = nowMouseZ - preMouseZ;
-            //    preMouseZ = nowMouseZ;
-            //    Vector3 vv = targetObj.position;
-            //    vv.z += distance * speed;
-            //    targetObj.position = vv;
-
-            //    vv = arrowObj.position;
-            //    vv.z += distance * speed;
-            //    arrowObj.position = vv;
-            //}
-
-            if (targetObj != null && canDrag)
+            if (canDrag)
             {
                 RaycastHit hit;
                 Vector3 mousePosition = Input.mousePosition;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 1000, 1 << LayerMask.NameToLayer("terrain")))
+                int layerValue = ~(1 << LayerMask.NameToLayer("temp"));
+                if (Physics.Raycast(ray, out hit, 1000, layerValue))
                 {
-                    if (hit.transform.CompareTag("terrain"))
+                    if (goodInfo.goodType == GoodType.spawnObj)
                     {
-                        targetObj.position = hit.point;
+                        Vector3 point = hit.point;
+                        Collider cc = targetObj.GetComponent<Collider>();
+                        if (cc)
+                        {
+                            point.y = cc.bounds.size.y / 4f;
+                        }
+                        targetObj.position = point;
+                    }
+                    else if (goodInfo.goodType == GoodType.changeImg)
+                    {
+
+                    }
+
+                    string tag = hit.transform.tag;
+                    bool isHas = goodInfo.tags.Contains(tag);
+                    canPlace = isHas;
+                    if (isHas)
+                    {
+                        raycastHit = hit.transform.gameObject;
+                        mainUI.tipObject.SetActive(false);
+                        if (targetObj)
+                        {
+                            Utils.SetObjectHighLight(targetObj.gameObject, true, Color.clear);
+                        }
+                    }
+                    else
+                    {
+                        mainUI.tipObject.SetActive(true);
+                        if (targetObj)
+                        {
+                            Utils.SetObjectHighLight(targetObj.gameObject, true, Color.red);
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    GameObject raycastHit;
+    Texture textureBG = null;
+    [HideInInspector]
+    public Transform targetObj;
+    [HideInInspector]
+    public Goods goodInfo;
+    [HideInInspector]
+    public bool canDrag = false;
+
+    private void OnGUI()
+    {
+        if (canDrag)
+        {
+            if (goodInfo != null && goodInfo.goodType == GoodType.changeImg)
+            {
+                if (textureBG == null)
+                {
+                    textureBG = Resources.Load<Texture>(goodInfo.spriteName);
+                }
+                Vector3 mousePosition = Input.mousePosition;
+                GUI.DrawTexture(new Rect(mousePosition.x - 40, Screen.height - mousePosition.y - 40, 80, 80), textureBG);
             }
         }
     }

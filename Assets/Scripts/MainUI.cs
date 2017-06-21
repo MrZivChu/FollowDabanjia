@@ -3,21 +3,35 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using LitJson;
+using System;
 
-public class Goods
+enum ClickTransfromType
 {
-    public string id;
-    public string spriteName;
-    public string name;
-    public string home;
-    public string prefabName;
-    public string chang;
-    public string kuan;
-    public string gao;
+    initial = 0,
+    reducePX = 1,
+    addPX = 2,
+    reducePY = 3,
+    addPY = 4,
+    reducePZ = 5,
+    addPZ = 6,
+    reduceRX = 7,
+    addRX = 8,
+    reduceRY = 9,
+    addRY = 10,
+    reduceRZ = 11,
+    addRZ = 12,
+    reduceSX = 13,
+    addSX = 14,
+    reduceSY = 15,
+    addSY = 16,
+    reduceSZ = 17,
+    addSZ = 18
 }
 
 public class MainUI : MonoBehaviour
 {
+    public GameObject tipObject;
+    public ThreeDOperate threeDOperate;
 
     public GraphicRaycaster personCanvasGraphicRaycaster;
 
@@ -80,8 +94,11 @@ public class MainUI : MonoBehaviour
     public Button zRotateAdd;
     public InputField zRotateInputField;
 
+    ClickTransfromType clickTransfromType = ClickTransfromType.initial;
 
     Dictionary<string, List<Goods>> goodsDic = new Dictionary<string, List<Goods>>();
+
+
     private void Start()
     {
         EventTriggerListener.Get(showBtn.gameObject).onClick = ShowBtns;
@@ -114,6 +131,17 @@ public class MainUI : MonoBehaviour
         EventTriggerListener.Get(yRotateAdd.gameObject).onClick = AddRotateY;
         EventTriggerListener.Get(zRotateReduce.gameObject).onClick = ReduceRotateZ;
         EventTriggerListener.Get(zRotateAdd.gameObject).onClick = AddRotateZ;
+
+        EventTriggerListener.Get(changReduce.gameObject).onDown = (go, param) => { isPress = false; clickTransfromType = ClickTransfromType.reduceSX; };
+        EventTriggerListener.Get(changReduce.gameObject).onUp = (go, param) => { clickTransfromType = ClickTransfromType.initial; tempTime = 0; };
+        EventTriggerListener.Get(changAdd.gameObject).onDown = (go, param) => { isPress = false; clickTransfromType = ClickTransfromType.addSX; };
+        EventTriggerListener.Get(changAdd.gameObject).onUp = (go, param) => { clickTransfromType = ClickTransfromType.initial; tempTime = 0; };
+
+        EventTriggerListener.Get(yRotateReduce.gameObject).onDown = (go, param) => { isPress = false; clickTransfromType = ClickTransfromType.reduceRY; };
+        EventTriggerListener.Get(yRotateReduce.gameObject).onUp = (go, param) => { clickTransfromType = ClickTransfromType.initial; tempTime = 0; };
+        EventTriggerListener.Get(yRotateAdd.gameObject).onDown = (go, param) => { isPress = false; clickTransfromType = ClickTransfromType.addRY; };
+        EventTriggerListener.Get(yRotateAdd.gameObject).onUp = (go, param) => { clickTransfromType = ClickTransfromType.initial; tempTime = 0; };
+
 
         changInputField.onEndEdit.AddListener(ChangOnEndEdit);
         kuanInputField.onEndEdit.AddListener(KuanOnEndEdit);
@@ -149,11 +177,22 @@ public class MainUI : MonoBehaviour
                             good.id = childJD["id"].ToString();
                             good.name = childJD["name"].ToString();
                             good.home = childJD["home"].ToString();
-                            good.prefabName = DirecName + "/" + childJD["prefabName"].ToString();
-                            good.spriteName = DirecName + "/" + childJD["spriteName"].ToString();
+                            good.prefabName = childJD["prefabName"].ToString();
+                            good.spriteName = childJD["spriteName"].ToString();
                             good.chang = childJD["chang"].ToString();
                             good.kuan = childJD["kuan"].ToString();
                             good.gao = childJD["gao"].ToString();
+                            good.goodType = (GoodType)(Convert.ToInt32(childJD["goodType"].ToString()));
+                            JsonData jd = childJD["tags"];
+                            if (jd != null && jd.Count > 0)
+                            {
+                                good.tags = new List<string>();
+                                for (int m = 0; m < jd.Count; m++)
+                                {
+                                    good.tags.Add(jd[m].ToString());
+                                }
+                            }
+
                             if (goodsDic.ContainsKey(DirecName))
                             {
                                 goodsDic[DirecName].Add(good);
@@ -188,6 +227,79 @@ public class MainUI : MonoBehaviour
         }
     }
 
+    float addSpanValue = 0.5f;
+    float tempTime = 0;
+    float maxTempTime = 0.5f;
+    bool isPress = false;
+    private void Update()
+    {
+        if (clickTransfromType != ClickTransfromType.initial)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                tempTime += Time.deltaTime;
+                if (tempTime >= maxTempTime)
+                {
+                    isPress = true;
+                    if (clickTransfromType == ClickTransfromType.reduceSX)
+                    {
+                        if (operateObj)
+                        {
+                            Vector3 scale = operateObj.localScale;
+                            float tt = addSpanValue * Time.deltaTime;
+                            float t = scale.x - tt;
+                            if (t < 1)
+                            {
+                                t = 1;
+                            }
+                            SetScaleX(t);
+                        }
+                    }
+                    else if (clickTransfromType == ClickTransfromType.addSX)
+                    {
+                        if (operateObj)
+                        {
+                            Vector3 scale = operateObj.localScale;
+                            float tt = addSpanValue * Time.deltaTime;
+                            SetScaleX(scale.x + tt);
+                        }
+                    }
+                    else if (clickTransfromType == ClickTransfromType.reduceRY)
+                    {
+                        if (operateObj)
+                        {
+                            float tt = addSpanValue * Time.deltaTime * 30;
+                            rotateY -= tt;
+                            operateObj.Rotate(operateObj.transform.up, -tt);
+                            yRotateInputField.text = rotateY.ToString("0.00");
+                            threeDOperate.SetArrowPosition();
+                        }
+                    }
+                    else if (clickTransfromType == ClickTransfromType.addRY)
+                    {
+                        if (operateObj)
+                        {
+                            float tt = addSpanValue * Time.deltaTime * 30;
+                            rotateY += tt;
+                            operateObj.Rotate(operateObj.transform.up, tt);
+                            yRotateInputField.text = rotateY.ToString("0.00");
+                            threeDOperate.SetArrowPosition();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    void SetScaleX(float value)
+    {
+        Vector3 scale = operateObj.localScale;
+        scale.x = value;
+        operateObj.localScale = scale;
+        changInputField.text = operateObj.localScale.x.ToString("0.00");
+        threeDOperate.SetArrowPosition();
+    }
 
     public void InitObjectData(Transform tTarget)
     {
@@ -196,8 +308,6 @@ public class MainUI : MonoBehaviour
         {
             setParamPanel.SetActive(true);
             operateObjPanel.SetActive(true);
-
-
 
             changInputField.text = operateObj.localScale.x.ToString("0.00");
             kuanInputField.text = operateObj.localScale.z.ToString("0.00");
@@ -224,13 +334,11 @@ public class MainUI : MonoBehaviour
             bool isok = float.TryParse(content, out result);
             if (isok)
             {
-                if (result >= 1)
+                if (result < 1)
                 {
-                    Vector3 scale = operateObj.localScale;
-                    scale.x = result;
-                    operateObj.localScale = scale;
-                    objectOperate.SetArrowPosition();
+                    result = 1;
                 }
+                SetScaleX(result);
             }
         }
     }
@@ -243,13 +351,14 @@ public class MainUI : MonoBehaviour
             bool isok = float.TryParse(content, out result);
             if (isok)
             {
-                if (result >= 1)
+                if (result < 1)
                 {
-                    Vector3 scale = operateObj.localScale;
-                    scale.z = result;
-                    operateObj.localScale = scale;
-                    objectOperate.SetArrowPosition();
+                    result = 1;
                 }
+                Vector3 scale = operateObj.localScale;
+                scale.z = result;
+                operateObj.localScale = scale;
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -263,13 +372,14 @@ public class MainUI : MonoBehaviour
             bool isok = float.TryParse(content, out result);
             if (isok)
             {
-                if (result >= 1)
+                if (result < 1)
                 {
-                    Vector3 scale = operateObj.localScale;
-                    scale.y = result;
-                    operateObj.localScale = scale;
-                    objectOperate.SetArrowPosition();
+                    result = 1;
                 }
+                Vector3 scale = operateObj.localScale;
+                scale.y = result;
+                operateObj.localScale = scale;
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -286,7 +396,7 @@ public class MainUI : MonoBehaviour
                 Vector3 position = operateObj.position;
                 position.x = result;
                 operateObj.localPosition = position;
-                objectOperate.SetArrowPosition();
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -303,7 +413,7 @@ public class MainUI : MonoBehaviour
                 Vector3 position = operateObj.position;
                 position.y = result;
                 operateObj.localPosition = position;
-                objectOperate.SetArrowPosition();
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -320,7 +430,7 @@ public class MainUI : MonoBehaviour
                 Vector3 position = operateObj.position;
                 position.z = result;
                 operateObj.localPosition = position;
-                objectOperate.SetArrowPosition();
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -338,8 +448,8 @@ public class MainUI : MonoBehaviour
             {
                 result = rotateX - result;
                 rotateX -= result;
-                operateObj.Rotate(operateObj.transform.right, result);
-                objectOperate.SetArrowPosition();
+                operateObj.Rotate(Vector3.right, result);
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -355,8 +465,8 @@ public class MainUI : MonoBehaviour
             {
                 result = rotateY - result;
                 rotateY -= result;
-                operateObj.Rotate(operateObj.transform.up, result);
-                objectOperate.SetArrowPosition();
+                operateObj.Rotate(Vector3.up, result);
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -373,8 +483,8 @@ public class MainUI : MonoBehaviour
                 print(rotateZ + " = " + result);
                 result = rotateZ - result;
                 rotateZ -= result;
-                operateObj.Rotate(operateObj.transform.forward, result);
-                objectOperate.SetArrowPosition();
+                operateObj.Rotate(Vector3.forward, result);
+                threeDOperate.SetArrowPosition();
             }
         }
     }
@@ -388,7 +498,13 @@ public class MainUI : MonoBehaviour
         {
             Destroy(operateObj.gameObject);
             operateObjPanel.SetActive(false);
+            objectOperate.canOperate = true;
             setParamPanel.SetActive(false);
+            if (threeDOperate.current3DObj)
+            {
+                threeDOperate.current3DObj.gameObject.SetActive(false);
+            }
+            threeDOperate.index = 0;
         }
     }
 
@@ -429,9 +545,9 @@ public class MainUI : MonoBehaviour
 
     void onChangeRoomPanel(GameObject go, object param)
     {
-        AddGoodsPanel.SetActive(false);
-        SelectRoomPanel.SetActive(!SelectRoomPanel.activeSelf);
-        personCanvasGraphicRaycaster.enabled = !SelectRoomPanel.activeSelf;
+        //AddGoodsPanel.SetActive(false);
+        //SelectRoomPanel.SetActive(!SelectRoomPanel.activeSelf);
+        //personCanvasGraphicRaycaster.enabled = !SelectRoomPanel.activeSelf;
     }
 
     void onAddGoodsPanel(GameObject go, object param)
@@ -452,28 +568,25 @@ public class MainUI : MonoBehaviour
 
     void ReduceChange(GameObject go, object param)
     {
-        if (operateObj)
+        if (operateObj && !isPress)
         {
             Vector3 scale = operateObj.localScale;
-            if (scale.x - distance >= 1)
+            float tt = scale.x - distance;
+            if (tt < 1)
             {
-                scale.x -= distance;
-                operateObj.localScale = scale;
-                changInputField.text = operateObj.localScale.x.ToString("0.00");
-                objectOperate.SetArrowPosition();
+                tt = 1;
             }
+            SetScaleX(tt);
         }
     }
 
     void AddChange(GameObject go, object param)
     {
-        if (operateObj)
+        if (operateObj && !isPress)
         {
             Vector3 scale = operateObj.localScale;
-            scale.x += distance;
-            operateObj.localScale = scale;
-            changInputField.text = operateObj.localScale.x.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            float tt = scale.x + distance;
+            SetScaleX(tt);
         }
     }
 
@@ -482,13 +595,15 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             Vector3 scale = operateObj.localScale;
-            if (scale.z - distance >= 1)
+            float tt = scale.z - distance;
+            if (tt < 1)
             {
-                scale.z -= distance;
-                operateObj.localScale = scale;
-                kuanInputField.text = operateObj.localScale.z.ToString("0.00");
-                objectOperate.SetArrowPosition();
+                tt = 1;
             }
+            scale.z = tt;
+            operateObj.localScale = scale;
+            kuanInputField.text = operateObj.localScale.z.ToString("0.00");
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -500,7 +615,7 @@ public class MainUI : MonoBehaviour
             scale.z += distance;
             operateObj.localScale = scale;
             kuanInputField.text = operateObj.localScale.z.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -509,13 +624,15 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             Vector3 scale = operateObj.localScale;
-            if (scale.y - distance >= 1)
+            float tt = scale.y - distance;
+            if (tt < 1)
             {
-                scale.y -= distance;
-                operateObj.localScale = scale;
-                gaoInputField.text = operateObj.localScale.y.ToString("0.00");
-                objectOperate.SetArrowPosition();
+                tt = 1;
             }
+            scale.y = tt;
+            operateObj.localScale = scale;
+            gaoInputField.text = operateObj.localScale.y.ToString("0.00");
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -527,7 +644,7 @@ public class MainUI : MonoBehaviour
             scale.y += distance;
             operateObj.localScale = scale;
             gaoInputField.text = operateObj.localScale.y.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -539,7 +656,7 @@ public class MainUI : MonoBehaviour
             position.x -= distance;
             operateObj.position = position;
             xInputField.text = operateObj.position.x.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -551,7 +668,7 @@ public class MainUI : MonoBehaviour
             position.x += distance;
             operateObj.position = position;
             xInputField.text = operateObj.position.x.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -563,7 +680,7 @@ public class MainUI : MonoBehaviour
             position.y -= distance;
             operateObj.position = position;
             yInputField.text = operateObj.position.y.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -575,7 +692,7 @@ public class MainUI : MonoBehaviour
             position.y += distance;
             operateObj.position = position;
             yInputField.text = operateObj.position.y.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -587,7 +704,7 @@ public class MainUI : MonoBehaviour
             position.z -= distance;
             operateObj.position = position;
             zInputField.text = operateObj.position.z.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -599,7 +716,7 @@ public class MainUI : MonoBehaviour
             position.z += distance;
             operateObj.position = position;
             zInputField.text = operateObj.position.z.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -608,9 +725,9 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             rotateX -= distance;
-            operateObj.Rotate(operateObj.transform.right, -distance);
+            operateObj.Rotate(Vector3.right, -distance);
             xRotateInputField.text = rotateX.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -619,9 +736,9 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             rotateX += distance;
-            operateObj.Rotate(operateObj.transform.right, distance);
+            operateObj.Rotate(Vector3.right, distance);
             xRotateInputField.text = rotateX.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -630,9 +747,9 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             rotateY -= distance;
-            operateObj.Rotate(operateObj.transform.up, -distance);
+            operateObj.Rotate(Vector3.up, -distance);
             yRotateInputField.text = rotateY.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -641,9 +758,9 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             rotateY += distance;
-            operateObj.Rotate(operateObj.transform.up, distance);
+            operateObj.Rotate(Vector3.up, distance);
             yRotateInputField.text = rotateY.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -652,9 +769,9 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             rotateZ -= distance;
-            operateObj.Rotate(operateObj.transform.forward, -distance);
+            operateObj.Rotate(Vector3.forward, -distance);
             zRotateInputField.text = rotateZ.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -663,9 +780,9 @@ public class MainUI : MonoBehaviour
         if (operateObj)
         {
             rotateZ += distance;
-            operateObj.Rotate(operateObj.transform.forward, distance);
+            operateObj.Rotate(Vector3.forward, distance);
             zRotateInputField.text = rotateZ.ToString("0.00");
-            objectOperate.SetArrowPosition();
+            threeDOperate.SetArrowPosition();
         }
     }
 
@@ -684,7 +801,7 @@ public class MainUI : MonoBehaviour
         GameObject cell = go;
         if (isSpawn)
         {
-            Object obj = Resources.Load("SelectGoodCell");
+            UnityEngine.Object obj = Resources.Load("SelectGoodCell");
             if (obj)
             {
                 cell = Instantiate(obj) as GameObject;
@@ -704,30 +821,51 @@ public class MainUI : MonoBehaviour
             if (currentPosition.y - orignalPosition.y > 10)
             {
                 Goods tgood = (Goods)tdata;
-                Object obj = Resources.Load<GameObject>("Furniture/" + tgood.prefabName);
-                if (obj)
-                {
-                    GameObject dragObject = Instantiate(obj) as GameObject;
-                    dragObject.transform.localPosition = Vector3.zero;
-                    AddGoodsPanel.SetActive(false);
-                    objectOperate.canDrag = true;
-                    if (objectOperate.targetObj)
-                    {
-                        Utils.SetObjectHighLight(objectOperate.targetObj.gameObject, false);
-                    }
-                    objectOperate.targetObj = dragObject.transform;
 
-                    GoodInfo goodInfo = dragObject.GetComponent<GoodInfo>();
-                    if (goodInfo == null)
-                    {
-                        goodInfo = dragObject.AddComponent<GoodInfo>();
-                    }
-                    goodInfo.currentGood = tgood;
-                    Utils.SetObjectHighLight(dragObject, true);
+                AddGoodsPanel.SetActive(false);
+                tipObject.SetActive(false);
+                if (objectOperate.targetObj)
+                {
+                    Utils.SetObjectHighLight(objectOperate.targetObj.gameObject, false, Color.clear);
                 }
+                setParamPanel.SetActive(false);
+                operateObjPanel.SetActive(false);
+
+                if (tgood.goodType == GoodType.spawnObj)
+                {
+                    UnityEngine.Object obj = Resources.Load<GameObject>(tgood.prefabName);
+                    if (obj)
+                    {
+                        GameObject dragObject = Instantiate(obj) as GameObject;
+                        //dragObject.transform.localPosition = Vector3.zero;
+                        GoodInfo goodInfo = dragObject.GetComponent<GoodInfo>();
+                        if (goodInfo == null)
+                        {
+                            goodInfo = dragObject.AddComponent<GoodInfo>();
+                        }
+                        goodInfo.currentGood = tgood;
+                        objectOperate.targetObj = dragObject.transform;
+                        objectOperate.canOperate = true;
+                        threeDOperate.index = 0;
+                        if (threeDOperate.current3DObj != null)
+                        {
+                            threeDOperate.current3DObj.gameObject.SetActive(false);
+                        }
+                        foreach (Transform tran in objectOperate.targetObj.GetComponentsInChildren<Transform>())
+                        {
+                            tran.gameObject.layer = LayerMask.NameToLayer("temp");
+                        }
+                    }
+                }
+                else if (tgood.goodType == GoodType.changeImg)
+                {
+                    objectOperate.targetObj = null;
+                }
+                objectOperate.goodInfo = tgood;
+                objectOperate.canDrag = true;
             }
         };
-        cell.GetComponent<Image>().sprite = Resources.Load<Sprite>("Furniture/" + data.spriteName);
+        cell.GetComponent<Image>().sprite = Resources.Load<Sprite>(data.spriteName);
         cell.SetActive(true);
     }
 }
