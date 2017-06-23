@@ -47,9 +47,9 @@ public class ThreeDOperate : MonoBehaviour
         if (objectOperate.targetObj)
         {
             Vector3 spawnVector = objectOperate.targetObj.position;
-            spawnVector.x += 0.08f;
-            spawnVector.y += 0.5f;
-            spawnVector.z += 0.2f;
+            //spawnVector.x += 0.08f;
+            //spawnVector.y += 0.5f;
+            //spawnVector.z += 0.2f;
             if (current3DObj != null)
             {
                 current3DObj.position = spawnVector;
@@ -187,7 +187,7 @@ public class ThreeDOperate : MonoBehaviour
                 {
                     objectOperate.targetObj.Rotate(Vector3.up, -distance * speed * 10);
                 }
-                mainUI.InitObjectData(objectOperate.targetObj);
+                mainUI.InitObjectData();
             }
             else if (theDirection == Direction.TopBottom)
             {
@@ -215,7 +215,7 @@ public class ThreeDOperate : MonoBehaviour
                 {
                     objectOperate.targetObj.Rotate(Vector3.forward, -distance * speed * 10);
                 }
-                mainUI.InitObjectData(objectOperate.targetObj);
+                mainUI.InitObjectData();
             }
             else if (theDirection == Direction.ForwardBack)
             {
@@ -243,7 +243,7 @@ public class ThreeDOperate : MonoBehaviour
                 {
                     objectOperate.targetObj.Rotate(Vector3.right, distance * speed * 10);
                 }
-                mainUI.InitObjectData(objectOperate.targetObj);
+                mainUI.InitObjectData();
             }
         }
     }

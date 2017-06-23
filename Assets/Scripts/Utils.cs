@@ -132,4 +132,12 @@ public class Utils : MonoBehaviour
             }
         }
     }
+
+    public static void WorldToRectTransfom(Canvas tcanvas, Vector3 screenPosition, GameObject uiObj)
+    {
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(tcanvas.transform as RectTransform, screenPosition, tcanvas.worldCamera, out pos);
+        RectTransform rect = uiObj.transform as RectTransform;
+        rect.anchoredPosition = pos;
+    }
 }

@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
-
+using UnityEngine.SceneManagement;
 
 public class Room
 {
@@ -12,6 +12,14 @@ public class Room
 
 public class SelectRoom : MonoBehaviour
 {
+    [HideInInspector]
+    public int selectToggleIndex = 0;
+    public List<Toggle> toggleList = new List<Toggle>();
+
+
+    public GameObject main1;
+    public Button backBtn;
+
     public List<GameObject> BtnList = new List<GameObject>();
     Dictionary<int, List<Room>> dic = new Dictionary<int, List<Room>>();
 
@@ -34,6 +42,12 @@ public class SelectRoom : MonoBehaviour
                 }
             }
         }
+        toggleList[selectToggleIndex].isOn = true;
+        EventTriggerListener.Get(backBtn.gameObject).onClick = (go, param) =>
+        {
+            main1.SetActive(true);
+            gameObject.SetActive(false);
+        };
     }
 
     List<Room> clickListRoom = new List<Room>();
@@ -71,5 +85,11 @@ public class SelectRoom : MonoBehaviour
         };
         cell.GetComponent<Image>().sprite = data.roomSprite;
         cell.SetActive(true);
+    }
+
+    public void SelectRoomOK()
+    {
+        Loading.index = 2;
+        SceneManager.LoadScene("Loading");
     }
 }

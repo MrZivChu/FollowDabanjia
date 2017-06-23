@@ -1,58 +1,85 @@
 {
-  "Pillows": {
-   "directName":"Pillows",
+  "Fool": {
+   "directName":"Fool",
     "goods":{
               "1" : {
                       "id": "1",
                       "name": "电器1",
                       "home": "无锡电器制造有限公司",
-                      "prefabName": "Furniture/Pillows/Prefabs/Pillow_1",
-                      "spriteName": "Furniture/Pillows/Prefabs/Pillow_1",
+                      "albedo": "Fool/M_01cj_mudiban",
+                      "normalMap": "Fool/M_01cj_mudiban_NRM",
+                      "occlusion": "Fool/M_01cj_mudiban_OCC",
                       "chang":"100",      
                       "kuan":"1000",      
                       "gao":"100",
-					  "tags":["bed"],
-					  "goodType":"1"            
+					  "tags":["terrain"],
+					  "goodType":"2"            
                     },
               "2" : {
                         "id": "2",
                         "name": "电器2",
                         "home": "南京电器制造有限公司",
-                        "prefabName": "Furniture/Pillows/Prefabs/Pillow_16",
-                        "spriteName": "Furniture/Pillows/Prefabs/Pillow_16",
+                        "albedo": "Fool/地砖001",
+						"normalMap": "Fool/地砖001_NRM",
+						"occlusion": "Fool/地砖001_OCC",
                         "chang":"100",      
                         "kuan":"1000",      
                         "gao":"100",
-						"tags":["bed"],
-					    "goodType":"1"                
+						"tags":["terrain"],
+					    "goodType":"2"                
                       },
               "3" : {
                         "id": "3",
                         "name": "电器3",
                         "home": "苏州电器制造有限公司",
-                        "prefabName": "Furniture/Pillows/Prefabs/Pillow_33",
-                        "spriteName": "Furniture/Pillows/Prefabs/Pillow_33",
+                        "albedo": "Fool/地砖002",
+						"normalMap": "Fool/地砖002_NRM",
+						"occlusion": "Fool/地砖002_OCC",
                         "chang":"100",      
                         "kuan":"1000",      
                         "gao":"100",
-						"tags":["bed"],
-						"goodType":"1"             
+						"tags":["terrain"],
+						"goodType":"2"             
                       }
       }
     },
-  "KitchenSet": {
-    "directName":"KitchenSet",
+  "Lamps": {
+    "directName":"Lamps",
     "goods":{
             "1" : {
                     "id": "1",
                     "name": "电灯1",
                     "home": "无锡电器制造有限公司",
-                    "prefabName": "Furniture/KitchenSet/Prefabs/New_Kitchen/Kitchen_1/Sink",
-                    "spriteName": "Furniture/KitchenSet/Prefabs/New_Kitchen/Kitchen_1/Sink",
+                    "prefabName": "Lamps/chandelier_吊灯/吊灯001",
+                    "spriteName": "Lamps/chandelier_吊灯/吊灯001",
                     "chang":"200",      
                     "kuan":"7000",      
                     "gao":"500",
-					"tags":["terrain"],
+					"tags":["topwall","terrain"],
+					"goodType":"1"              
+                  },
+			 "2" : {
+                    "id": "1",
+                    "name": "电灯1",
+                    "home": "无锡电器制造有限公司",
+                    "prefabName": "Lamps/chandelier_吊灯/吊灯002",
+                    "spriteName": "Lamps/chandelier_吊灯/吊灯002",
+                    "chang":"200",      
+                    "kuan":"7000",      
+                    "gao":"500",
+					"tags":["topwall","terrain"],
+					"goodType":"1"              
+                  },
+			"3" : {
+                    "id": "1",
+                    "name": "电灯1",
+                    "home": "无锡电器制造有限公司",
+                    "prefabName": "Lamps/chandelier_吊灯/Couch 2 (1)",
+                    "spriteName": "Lamps/chandelier_吊灯/Couch 2 (1)",
+                    "chang":"200",      
+                    "kuan":"7000",      
+                    "gao":"500",
+					"tags":["terrain","ontable"],
 					"goodType":"1"              
                   }
       }
@@ -97,51 +124,5 @@
 					"goodType":"1"              
                   }
       }
-    },
-	"Lamps": {
-    "directName":"Lamps",
-    "goods":{
-              "1" : {
-                      "id": "1",
-                      "name": "电灯1",
-                      "home": "无锡电器制造有限公司",
-                      "prefabName": "Furniture/Lamps/Prefabs/Lamp_12",
-                      "spriteName": "Furniture/Lamps/Prefabs/Lamp_12",
-                      "chang":"200",      
-                      "kuan":"7000",      
-                      "gao":"500",
-					  "tags":["ceiwall"],
-					  "goodType":"1"              
-                    }
-			}
-    },
-	"Paintings": {
-    "directName":"Paintings",
-    "goods":{
-              "1" : {
-                      "id": "1",
-                      "name": "墙纸1",
-                      "home": "无锡电器制造有限公司",
-                      "prefabName": "Furniture/Paintings/Prefabs/Painting_1",
-                      "spriteName": "Furniture/Paintings/Prefabs/Painting_1",
-                      "chang":"200",      
-                      "kuan":"7000",      
-                      "gao":"500",
-					  "tags":["ceiwall"],
-					  "goodType":"2"              
-                    },
-			 "2" : {
-                      "id": "2",
-                      "name": "墙纸2",
-                      "home": "无锡电器制造有限公司",
-                      "prefabName": "Furniture/Paintings/Prefabs/Painting_2",
-                      "spriteName": "Furniture/Paintings/Prefabs/Painting_2",
-                      "chang":"200",      
-                      "kuan":"7000",      
-                      "gao":"500",
-					  "tags":["ceiwall"],
-					  "goodType":"2"              
-                    }
-			}
     }
 }

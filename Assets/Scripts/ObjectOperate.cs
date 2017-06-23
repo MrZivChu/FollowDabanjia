@@ -11,16 +11,17 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-
+using UnityStandardAssets.CrossPlatformInput;
 
 public class ObjectOperate : MonoBehaviour
 {
-    public MainUI mainUI;
-    public ThreeDOperate threeDOperate;
-    bool canPlace = false;
+    public MainUI mainUIScript;
+    public ThreeDOperate threeDOperateScript;
 
+    //当打开3D辅助工具的时候，对象是不好被操作的，也就是不好被拖动的，因为两者是冲突的
     [HideInInspector]
     public bool canOperate = true;
+
 
     void Update()
     {
@@ -45,29 +46,48 @@ public class ObjectOperate : MonoBehaviour
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.transform.root.CompareTag("jiaju"))
+                    print(hit.transform.name);
+                    GoodInfo gif = hit.transform.GetComponent<GoodInfo>();
+                    if (gif != null)
                     {
-                        if (targetObj)
+                        Transform rootObj = gif.rootObj.transform;
+                        //if (rootObj != null && rootObj.CompareTag("jiaju"))
+                        if (rootObj != null)
                         {
-                            mainUI.tipObject.SetActive(false);
-                            Utils.SetObjectHighLight(targetObj.gameObject, false, Color.clear);
-                        }
-                        if (targetObj != hit.transform.root)
-                        {
-                            threeDOperate.index = 0;
-                            if (threeDOperate.current3DObj != null)
+                            //关闭上一个选中对象的选中效果
+                            if (targetObj)
                             {
-                                threeDOperate.current3DObj.gameObject.SetActive(false);
+                                mainUIScript.tipObject.SetActive(false);
+                                Utils.SetObjectHighLight(targetObj.gameObject, false, Color.clear);
+                            }
+                            //点击的是不同的对象则隐藏3D操作辅助工具
+                            if (targetObj != rootObj)
+                            {
+                                threeDOperateScript.index = 0;
+                                if (threeDOperateScript.current3DObj != null)
+                                {
+                                    threeDOperateScript.current3DObj.gameObject.SetActive(false);
+                                }
+                            }
+
+                            targetObj = rootObj;
+                            mainUIScript.operateObj = targetObj;
+                            //表示此物体可以被拖放
+                            if (gif.currentGood.tags != null && gif.currentGood.tags.Count > 0)
+                            {
+                                mainUIScript.InitObjectData();
+                                goods = gif.currentGood;
+                                foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+                                {
+                                    tran.gameObject.layer = LayerMask.NameToLayer("temp");
+                                }
+                                isDragging = true;
+                            }
+                            else
+                            {
+                                Utils.SetObjectHighLight(targetObj.gameObject, true, Color.clear);
                             }
                         }
-                        targetObj = hit.transform.root;
-                        goodInfo = targetObj.GetComponent<GoodInfo>().currentGood;
-                        mainUI.InitObjectData(targetObj);
-                        foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
-                        {
-                            tran.gameObject.layer = LayerMask.NameToLayer("temp");
-                        }
-                        canDrag = true;
                     }
                 }
             }
@@ -76,58 +96,55 @@ public class ObjectOperate : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (canDrag)
+            if (isDragging)
             {
                 if (canPlace)
                 {
-                    if (goodInfo.goodType == GoodType.spawnObj)
+                    if (goods.goodType == GoodType.spawnObj)
                     {
-                        mainUI.setParamPanel.SetActive(true);
-                        mainUI.operateObjPanel.SetActive(true);
-                        mainUI.InitObjectData(targetObj);
+                        mainUIScript.operateObj = targetObj;
+                        mainUIScript.setParamPanel.SetActive(true);
+                        mainUIScript.InitObjectData();
+                        RecoveryRaycast();
                     }
-                    else if (goodInfo.goodType == GoodType.changeImg)
+                    else if (goods.goodType == GoodType.changeImg)
                     {
-                        Texture t = Resources.Load<Texture>(goodInfo.prefabName);
-                        Utils.ChangeShaderAlbedo(raycastHit, t);
+                        Texture t1 = Resources.Load<Texture>(goods.albedo);
+                        Utils.ChangeShaderAlbedo(raycastHit, t1);
+                        Texture t2 = Resources.Load<Texture>(goods.normalMap);
+                        Utils.ChangeShaderNormalMap(raycastHit, t2);
+                        Texture t3 = Resources.Load<Texture>(goods.occlusion);
+                        Utils.ChangeShaderOcclusion(raycastHit, t3);
                         GoodInfo tt = raycastHit.GetComponent<GoodInfo>();
                         if (tt == null)
                         {
                             tt = raycastHit.AddComponent<GoodInfo>();
                         }
-                        tt.currentGood = goodInfo;
-                    }
-                    if (targetObj != null)
-                    {
-                        foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
-                        {
-                            tran.gameObject.layer = LayerMask.NameToLayer("Default");
-                        }
+                        tt.currentGood = goods;
                     }
                 }
                 else
                 {
-                    if (targetObj)
+                    if (goods.goodType == GoodType.spawnObj)
                     {
-                        Destroy(targetObj.gameObject);
+                        if (targetObj)
+                        {
+                            Destroy(targetObj.gameObject);
+                        }
+                        mainUIScript.setParamPanel.SetActive(false);
                     }
-                    mainUI.setParamPanel.SetActive(false);
-                    mainUI.operateObjPanel.SetActive(false);
                 }
-                if (raycastHit != null)
-                {
-                    Utils.SetObjectHighLight(raycastHit, false, Color.clear);
-                }
-                canDrag = false;
+                isDragging = false;
+                canPlace = false;
+
                 textureBG = null;
                 raycastHit = null;
-                goodInfo = null;
-                mainUI.tipObject.SetActive(false);
+                mainUIScript.tipObject.SetActive(false);
             }
         }
         if (Input.GetMouseButton(0))
         {
-            if (canDrag)
+            if (isDragging)
             {
                 RaycastHit hit;
                 Vector3 mousePosition = Input.mousePosition;
@@ -135,39 +152,29 @@ public class ObjectOperate : MonoBehaviour
                 int layerValue = ~(1 << LayerMask.NameToLayer("temp"));
                 if (Physics.Raycast(ray, out hit, 1000, layerValue))
                 {
-                    if (goodInfo.goodType == GoodType.spawnObj)
-                    {
-                        Vector3 point = hit.point;
-                        Collider cc = targetObj.GetComponent<Collider>();
-                        if (cc)
-                        {
-                            point.y = cc.bounds.size.y / 4f;
-                        }
-                        targetObj.position = point;
-                    }
-                    else if (goodInfo.goodType == GoodType.changeImg)
-                    {
-
-                    }
-
+                    //判断是否能放置在此物体上面
                     string tag = hit.transform.tag;
-                    bool isHas = goodInfo.tags.Contains(tag);
-                    canPlace = isHas;
-                    if (isHas)
+                    canPlace = goods.tags.Contains(tag);
+                    if (canPlace)
                     {
-                        raycastHit = hit.transform.gameObject;
-                        mainUI.tipObject.SetActive(false);
-                        if (targetObj)
+                        mainUIScript.tipObject.SetActive(false);
+                        if (goods.goodType == GoodType.spawnObj)
                         {
                             Utils.SetObjectHighLight(targetObj.gameObject, true, Color.clear);
+                            SetPosition(hit.point, tag);
+                        }
+                        else
+                        {
+                            raycastHit = hit.transform.gameObject;
                         }
                     }
                     else
                     {
-                        mainUI.tipObject.SetActive(true);
-                        if (targetObj)
+                        mainUIScript.tipObject.SetActive(true);
+                        if (goods.goodType == GoodType.spawnObj)
                         {
                             Utils.SetObjectHighLight(targetObj.gameObject, true, Color.red);
+                            SetPosition(hit.point, tag);
                         }
                     }
                 }
@@ -175,24 +182,90 @@ public class ObjectOperate : MonoBehaviour
         }
     }
 
+    //用于设置墙纸
     GameObject raycastHit;
-    Texture textureBG = null;
+
+    [HideInInspector]
+    public bool isDragging = false;
+    bool canPlace = false;
+
     [HideInInspector]
     public Transform targetObj;
-    [HideInInspector]
-    public Goods goodInfo;
-    [HideInInspector]
-    public bool canDrag = false;
+    Goods goods = null;
+    GoodType goodType = GoodType.spawnObj;
+    float centerY = 0;
+    float topY = 0;
+    public void InitParam(Transform toperateObj, Goods tgoods)
+    {
+        targetObj = toperateObj;
+        goods = tgoods;
+        goodType = tgoods.goodType;
 
+        if (toperateObj)
+        {
+            GoodInfo ttgoodInfo = toperateObj.GetComponent<GoodInfo>();
+            if (ttgoodInfo != null)
+            {
+                topY = ttgoodInfo.topY;
+                centerY = ttgoodInfo.centerY;
+            }
+        }
+    }
+
+
+    public void CloseHighLight()
+    {
+        if (targetObj)
+        {
+            Utils.SetObjectHighLight(targetObj.gameObject, false, Color.clear);
+        }
+    }
+
+    public void IgnoreRaycast()
+    {
+        if (targetObj != null)
+        {
+            foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+            {
+                tran.gameObject.layer = LayerMask.NameToLayer("temp");
+            }
+        }
+    }
+
+    public void RecoveryRaycast()
+    {
+        if (targetObj != null)
+        {
+            foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+            {
+                tran.gameObject.layer = LayerMask.NameToLayer("Default");
+            }
+        }
+    }
+
+    public void SetPosition(Vector3 point, string hitTag)
+    {
+        if (hitTag == "topwall" && goods.tags.Contains(hitTag))//表示是吊灯
+        {
+            point.y = point.y - (topY - centerY);
+        }
+        else
+        {
+            point.y = centerY + point.y;
+        }
+        targetObj.position = point;
+    }
+
+    Texture textureBG = null;
     private void OnGUI()
     {
-        if (canDrag)
+        if (isDragging)
         {
-            if (goodInfo != null && goodInfo.goodType == GoodType.changeImg)
+            if (goodType == GoodType.changeImg)
             {
                 if (textureBG == null)
                 {
-                    textureBG = Resources.Load<Texture>(goodInfo.spriteName);
+                    textureBG = Resources.Load<Texture>(goods.spriteName);
                 }
                 Vector3 mousePosition = Input.mousePosition;
                 GUI.DrawTexture(new Rect(mousePosition.x - 40, Screen.height - mousePosition.y - 40, 80, 80), textureBG);

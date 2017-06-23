@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using LitJson;
 using System;
+using UnityEngine.SceneManagement;
+using UnityStandardAssets.CrossPlatformInput;
 
 enum ClickTransfromType
 {
@@ -37,9 +39,7 @@ public class MainUI : MonoBehaviour
 
     public ObjectOperate objectOperate;
 
-    public Button showBtn;
-    public GameObject operationBtns;
-    public GameObject SelectRoomPanel;
+    public Button backBtn;
     public GameObject AddGoodsPanel;
     public Button changeRoomBtn;
     public Button addGoodsBtn;
@@ -49,9 +49,7 @@ public class MainUI : MonoBehaviour
 
     public GameObject showGoodDetailPanel;
 
-    public Button moveBtn;
-    public Button rotateBtn;
-    public Button scaleBtn;
+
     public Button deleteBtn;
     public Button showGoodDetailBtn;
 
@@ -98,18 +96,18 @@ public class MainUI : MonoBehaviour
 
     Dictionary<string, List<Goods>> goodsDic = new Dictionary<string, List<Goods>>();
 
-
+    bool isLeaveShowGoodDetailObject = false;
     private void Start()
     {
-        EventTriggerListener.Get(showBtn.gameObject).onClick = ShowBtns;
+        EventTriggerListener.Get(backBtn.gameObject).onClick = BackBtns;
         EventTriggerListener.Get(changeRoomBtn.gameObject).onClick = onChangeRoomPanel;
         EventTriggerListener.Get(addGoodsBtn.gameObject).onClick = onAddGoodsPanel;
 
         EventTriggerListener.Get(deleteBtn.gameObject).onClick = DeleteObject;
-        EventTriggerListener.Get(showGoodDetailBtn.gameObject).onClick = ShowGoodDetailObject;
-        EventTriggerListener.Get(moveBtn.gameObject).onClick = MoveObject;
-        EventTriggerListener.Get(rotateBtn.gameObject).onClick = RotateObject;
-        EventTriggerListener.Get(scaleBtn.gameObject).onClick = ScaleObject;
+        EventTriggerListener.Get(showGoodDetailBtn.gameObject).onEnter = ShowGoodDetailObject;
+        EventTriggerListener.Get(deleteBtn.gameObject).onEnter = LeaveShowGoodDetailObject;
+        EventTriggerListener.Get(operateObjPanel.gameObject).onExit = (go, param) => { isLeaveShowGoodDetailObject = true; };
+        EventTriggerListener.Get(operateObjPanel.gameObject).onEnter = (go, param) => { isLeaveShowGoodDetailObject = false; };
 
         EventTriggerListener.Get(changReduce.gameObject).onClick = ReduceChange;
         EventTriggerListener.Get(changAdd.gameObject).onClick = AddChange;
@@ -177,12 +175,22 @@ public class MainUI : MonoBehaviour
                             good.id = childJD["id"].ToString();
                             good.name = childJD["name"].ToString();
                             good.home = childJD["home"].ToString();
-                            good.prefabName = childJD["prefabName"].ToString();
-                            good.spriteName = childJD["spriteName"].ToString();
+                            good.goodType = (GoodType)(Convert.ToInt32(childJD["goodType"].ToString()));
+                            if (good.goodType == GoodType.spawnObj)
+                            {
+                                good.prefabName = childJD["prefabName"].ToString();
+                                good.spriteName = childJD["spriteName"].ToString();
+                            }
+                            else
+                            {
+                                good.albedo = childJD["albedo"].ToString();
+                                good.normalMap = childJD["normalMap"].ToString();
+                                good.occlusion = childJD["occlusion"].ToString();
+                            }
                             good.chang = childJD["chang"].ToString();
                             good.kuan = childJD["kuan"].ToString();
                             good.gao = childJD["gao"].ToString();
-                            good.goodType = (GoodType)(Convert.ToInt32(childJD["goodType"].ToString()));
+
                             JsonData jd = childJD["tags"];
                             if (jd != null && jd.Count > 0)
                             {
@@ -207,7 +215,7 @@ public class MainUI : MonoBehaviour
             }
         }
 
-        List<string> furnitureNames = new List<string>() { "Bed", "Curtains", "KitchenSet", "Lamps", "Paintings", "Pillows", "SofaChair", "TablesTV" };
+        List<string> furnitureNames = new List<string>() { "Fool", "Curtains", "KitchenSet", "Lamps", "Paintings", "Pillows", "SofaChair", "TablesTV" };
         for (int m = 0; m < TopButtonList.Count; m++)
         {
             List<Goods> tt = new List<Goods>();
@@ -227,6 +235,7 @@ public class MainUI : MonoBehaviour
         }
     }
 
+    public Canvas canvas;
     float addSpanValue = 0.5f;
     float tempTime = 0;
     float maxTempTime = 0.5f;
@@ -289,6 +298,71 @@ public class MainUI : MonoBehaviour
                 }
             }
         }
+
+
+        if (operateObj != null)
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                RaycastHit hit;
+                Vector3 mousePosition = Input.mousePosition;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit))
+                {
+                    GoodInfo gif = hit.transform.GetComponent<GoodInfo>();
+                    if (gif != null && gif.rootObj != null && operateObj == gif.rootObj.transform)
+                    {
+                        Vector3 screenPosition = Input.mousePosition;
+                        Utils.WorldToRectTransfom(canvas, screenPosition, operateObjPanel);
+                        RectTransform rtf = operateObjPanel.GetComponent<RectTransform>();
+                        Vector3 vv = rtf.anchoredPosition3D;
+                        vv.x += 60;
+                        vv.y -= 18;
+                        rtf.anchoredPosition3D = vv;
+                        operateObjPanel.SetActive(true);
+                        isLeaveShowGoodDetailObject = true;
+                    }
+                    else
+                    {
+                        operateObjPanel.SetActive(false);
+                    }
+                }
+                else
+                {
+                    operateObjPanel.SetActive(false);
+                }
+            }
+        }
+
+        if (isLeaveShowGoodDetailObject == true)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                operateObjPanel.SetActive(false);
+                showGoodDetailPanel.SetActive(false);
+            }
+            if (Input.GetMouseButton(1))
+            {
+                if (operateObjPanel.activeSelf)
+                {
+                    float yRot = CrossPlatformInputManager.GetAxis("Mouse X");
+                    float xRot = CrossPlatformInputManager.GetAxis("Mouse Y");
+                    if (yRot + xRot != 0)
+                    {
+                        showGoodDetailPanel.SetActive(false);
+                        operateObjPanel.SetActive(false);
+                    }
+                }
+            }
+        }
+        if (operateObjPanel.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.Space))
+            {
+                showGoodDetailPanel.SetActive(false);
+                operateObjPanel.SetActive(false);
+            }
+        }
     }
 
 
@@ -301,13 +375,11 @@ public class MainUI : MonoBehaviour
         threeDOperate.SetArrowPosition();
     }
 
-    public void InitObjectData(Transform tTarget)
+    public void InitObjectData()
     {
-        operateObj = tTarget;
-        if (operateObj)
+        if (operateObj != null)
         {
             setParamPanel.SetActive(true);
-            operateObjPanel.SetActive(true);
 
             changInputField.text = operateObj.localScale.x.ToString("0.00");
             kuanInputField.text = operateObj.localScale.z.ToString("0.00");
@@ -489,16 +561,16 @@ public class MainUI : MonoBehaviour
         }
     }
 
-
-    Transform operateObj;
+    [HideInInspector]
+    public Transform operateObj;
     public float distance = 1f;
     void DeleteObject(GameObject go, object param)
     {
         if (operateObj)
         {
             Destroy(operateObj.gameObject);
-            operateObjPanel.SetActive(false);
             objectOperate.canOperate = true;
+            operateObjPanel.SetActive(false);
             setParamPanel.SetActive(false);
             if (threeDOperate.current3DObj)
             {
@@ -523,36 +595,25 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    void MoveObject(GameObject go, object param)
+    void LeaveShowGoodDetailObject(GameObject go, object param)
     {
-
+        showGoodDetailPanel.SetActive(false);
     }
 
-    void RotateObject(GameObject go, object param)
+    void BackBtns(GameObject go, object param)
     {
-
-    }
-
-    void ScaleObject(GameObject go, object param)
-    {
-
-    }
-
-    void ShowBtns(GameObject go, object param)
-    {
-        operationBtns.SetActive(!operationBtns.activeSelf);
+        Loading.index = 1;
+        SceneManager.LoadScene("Loading");
     }
 
     void onChangeRoomPanel(GameObject go, object param)
     {
-        //AddGoodsPanel.SetActive(false);
-        //SelectRoomPanel.SetActive(!SelectRoomPanel.activeSelf);
-        //personCanvasGraphicRaycaster.enabled = !SelectRoomPanel.activeSelf;
+        Loading.index = 1;
+        SceneManager.LoadScene("Loading");
     }
 
     void onAddGoodsPanel(GameObject go, object param)
     {
-        SelectRoomPanel.SetActive(false);
         AddGoodsPanel.SetActive(!AddGoodsPanel.activeSelf);
         //personCanvasGraphicRaycaster.enabled = !AddGoodsPanel.activeSelf;
         //if (AddGoodsPanel.activeSelf)
@@ -820,49 +881,56 @@ public class MainUI : MonoBehaviour
             Vector3 currentPosition = Input.mousePosition;
             if (currentPosition.y - orignalPosition.y > 10)
             {
-                Goods tgood = (Goods)tdata;
-
+                //关闭添加家具的面板
                 AddGoodsPanel.SetActive(false);
+                //关闭提示"不能放置此处"的提示信息
                 tipObject.SetActive(false);
-                if (objectOperate.targetObj)
-                {
-                    Utils.SetObjectHighLight(objectOperate.targetObj.gameObject, false, Color.clear);
-                }
+                //关闭对象的高亮
+                objectOperate.CloseHighLight();
+                //关闭设置参数的面板
                 setParamPanel.SetActive(false);
-                operateObjPanel.SetActive(false);
 
+                //关闭3D辅助工具
+                threeDOperate.index = 0;
+                if (threeDOperate.current3DObj != null)
+                {
+                    threeDOperate.current3DObj.gameObject.SetActive(false);
+                }
+
+                Goods tgood = (Goods)tdata;
                 if (tgood.goodType == GoodType.spawnObj)
                 {
                     UnityEngine.Object obj = Resources.Load<GameObject>(tgood.prefabName);
                     if (obj)
                     {
+                        //实例化对象并给此对象附加关于此对象信息的脚本
                         GameObject dragObject = Instantiate(obj) as GameObject;
-                        //dragObject.transform.localPosition = Vector3.zero;
                         GoodInfo goodInfo = dragObject.GetComponent<GoodInfo>();
                         if (goodInfo == null)
                         {
                             goodInfo = dragObject.AddComponent<GoodInfo>();
                         }
                         goodInfo.currentGood = tgood;
-                        objectOperate.targetObj = dragObject.transform;
+
+                        //获取对象的中心点和上顶点
+                        goodInfo.centerY = dragObject.transform.position.y;
+                        if (goodInfo.topObj != null)
+                        {
+                            goodInfo.topY = goodInfo.topObj.transform.position.y;
+                        }
+
+                        objectOperate.InitParam(dragObject.transform, tgood);
+                        //让射线忽略对此对象的监测
+                        objectOperate.IgnoreRaycast();
+                        objectOperate.isDragging = true;
                         objectOperate.canOperate = true;
-                        threeDOperate.index = 0;
-                        if (threeDOperate.current3DObj != null)
-                        {
-                            threeDOperate.current3DObj.gameObject.SetActive(false);
-                        }
-                        foreach (Transform tran in objectOperate.targetObj.GetComponentsInChildren<Transform>())
-                        {
-                            tran.gameObject.layer = LayerMask.NameToLayer("temp");
-                        }
                     }
                 }
                 else if (tgood.goodType == GoodType.changeImg)
                 {
-                    objectOperate.targetObj = null;
+                    objectOperate.InitParam(null, tgood);
+                    objectOperate.isDragging = true;
                 }
-                objectOperate.goodInfo = tgood;
-                objectOperate.canDrag = true;
             }
         };
         cell.GetComponent<Image>().sprite = Resources.Load<Sprite>(data.spriteName);

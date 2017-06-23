@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System;
 
 public class Loading : MonoBehaviour
 {
@@ -15,8 +16,18 @@ public class Loading : MonoBehaviour
 
     int forwardImgIndex = 0;
     int backImgIndex = 0;
+
+    static int tempIndex = 0;
+
     private void Awake()
     {
+        tempIndex = tempIndex + 2;
+        if (tempIndex >= listSprite.Count)
+        {
+            tempIndex = 0;
+        }
+        forwardImgIndex = tempIndex;
+        backImgIndex = tempIndex;
         slider.value = 0;
         forwardBgImage.sprite = listSprite[forwardImgIndex];
         backBgImage.sprite = listSprite[backImgIndex];
@@ -25,14 +36,20 @@ public class Loading : MonoBehaviour
     void Start()
     {
         StartCoroutine(LoadLevelAsyn(index));
-        InvokeRepeating("ShowImage", 0.5f, 1.5f);
+        InvokeRepeating("ShowImage", 0.5f, 2f);
     }
 
     void ShowImage()
     {
         ChangeImage();
+        ChangeFillMethod();
+        canRun = true;
+    }
+
+    void ChangeFillMethod()
+    {
         forwardBgImage.gameObject.SetActive(true);
-        int nextFillIndex = Random.Range(0, listFillMethod.Count);
+        int nextFillIndex = UnityEngine.Random.Range(0, listFillMethod.Count);
         if (nextFillIndex == preFillIndex)
         {
             nextFillIndex++;
@@ -43,7 +60,6 @@ public class Loading : MonoBehaviour
         }
         forwardBgImage.fillMethod = listFillMethod[nextFillIndex];
         forwardBgImage.fillAmount = 1;
-        canRun = true;
     }
 
     void ChangeImage()
