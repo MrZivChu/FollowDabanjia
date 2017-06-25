@@ -133,6 +133,16 @@ public class Utils : MonoBehaviour
         }
     }
 
+    public static void ChangeShaderEmission(GameObject target, Color newColor) {
+        MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
+        if (meshRenderer != null) {
+            Material material = meshRenderer.material;
+            if (material != null) {
+                material.SetColor("_EmissionColor", newColor);
+            }
+        }
+    }
+
     public static void WorldToRectTransfom(Canvas tcanvas, Vector3 screenPosition, GameObject uiObj)
     {
         Vector2 pos;

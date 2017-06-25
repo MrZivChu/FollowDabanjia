@@ -2,45 +2,95 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class PlayMovie : MonoBehaviour
-{
-    public MovieTexture movTexture;
-    Image imgae = null;
-    Renderer theRenderer = null;
+public enum PlayType {
+    none = 0,
+    image = 1,
+    mesh = 2
+}
 
-    Texture orignalTexture1;
-    Texture orignalTexture2;
+public enum PlayStatus {
+    none = 0,
+    playing = 1,
+    stop = 2,
+    pause = 3
+}
 
-    void Start()
-    {
-        imgae = GetComponent<Image>();
-        if (imgae != null)
-        {
-            orignalTexture1 = imgae.material.mainTexture;
-            imgae.material.mainTexture = movTexture;
-        }
-        else
-        {
-            theRenderer = GetComponent<Renderer>();
-            if (theRenderer != null)
-            {
-                orignalTexture2 = theRenderer.material.mainTexture;
-                theRenderer.material.mainTexture = movTexture;
+public class PlayMovie : MonoBehaviour {
+    public MovieTexture movieTexture;
+    public PlayType playType = PlayType.none;
+    public bool isStartPlay = false;//是否程序运行就开始播放
+    public bool loop = true;
+
+    public Image imgae = null;
+    public Renderer theRenderer = null;
+
+    [HideInInspector]
+    public PlayStatus playStatus = PlayStatus.none;
+
+    //提供接口用于当关闭视频的时候是否关闭mesh
+    public bool isCloseMesh = false;
+
+    Texture imageOrignalTexture;
+    Texture meshOrignalTexture;
+
+    void Start() {
+        if (movieTexture != null) {
+            if (playType == PlayType.image) {
+                if (imgae != null) {
+                    imageOrignalTexture = imgae.material.mainTexture;
+                    imgae.material.mainTexture = movieTexture;
+                }
+            } else if (playType == PlayType.mesh) {
+                if (theRenderer != null) {
+                    meshOrignalTexture = theRenderer.material.mainTexture;
+                    theRenderer.material.mainTexture = movieTexture;
+                }
+            }
+            movieTexture.loop = loop;
+            if (isStartPlay) {
+                Play();
+            } else {
+                Pause();
             }
         }
-        movTexture.loop = true;
-        movTexture.Play();
     }
 
-    private void OnDestroy()
-    {
-        if (imgae != null)
-        {
-            imgae.material.mainTexture = orignalTexture1;
+    public void Play() {
+        if (movieTexture != null) {
+            movieTexture.Play();
+            playStatus = PlayStatus.playing;
+            if (theRenderer) {
+                theRenderer.enabled = true;
+            }
         }
-        if (theRenderer != null)
-        {
-            theRenderer.material.mainTexture = orignalTexture2;
+    }
+
+    public void Stop() {
+        if (movieTexture != null) {
+            movieTexture.Stop();
+            playStatus = PlayStatus.stop;
+        }
+    }
+
+    public void Pause() {
+        if (movieTexture != null) {
+            movieTexture.Pause();
+            playStatus = PlayStatus.pause;
+            if (isCloseMesh == true) {
+                if (theRenderer) {
+                    theRenderer.enabled = false;
+                }
+            }
+        }
+    }
+
+
+    private void OnDestroy() {
+        if (imgae != null) {
+            imgae.material.mainTexture = imageOrignalTexture;
+        }
+        if (theRenderer != null) {
+            theRenderer.material.mainTexture = meshOrignalTexture;
         }
     }
 }
