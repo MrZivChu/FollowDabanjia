@@ -13,7 +13,8 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class ObjectOperate : MonoBehaviour {
+public class ObjectOperate : MonoBehaviour
+{
     public MainUI mainUIScript;
     public ThreeDOperate threeDOperateScript;
 
@@ -22,54 +23,68 @@ public class ObjectOperate : MonoBehaviour {
     public bool canOperate = true;
 
 
-    void Update() {
-        if (!canOperate) {
+    void Update()
+    {
+        if (!canOperate)
+        {
             return;
         }
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0))
+        {
 #if IPHONE || ANDROID
 			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
 #else
             if (EventSystem.current.IsPointerOverGameObject())
 #endif
             {//当前触摸在UI上
-            } else//当前没有触摸在UI上
-              {
+            }
+            else//当前没有触摸在UI上
+            {
                 RaycastHit hit;
                 Vector3 mousePosition = Input.mousePosition;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit)) {
+                if (Physics.Raycast(ray, out hit))
+                {
                     print(hit.transform.name);
                     GoodInfo gif = hit.transform.GetComponent<GoodInfo>();
-                    if (gif != null) {
+                    if (gif != null)
+                    {
                         Transform rootObj = gif.rootObj.transform;
                         //if (rootObj != null && rootObj.CompareTag("jiaju"))
-                        if (rootObj != null) {
+                        if (rootObj != null)
+                        {
                             //关闭上一个选中对象的选中效果
-                            if (targetObj) {
+                            if (targetObj)
+                            {
                                 mainUIScript.tipObject.SetActive(false);
                                 Utils.SetObjectHighLight(targetObj.gameObject, false, Color.clear);
                             }
                             //点击的是不同的对象则隐藏3D操作辅助工具
-                            if (targetObj != rootObj) {
+                            if (targetObj != rootObj)
+                            {
                                 threeDOperateScript.index = 0;
-                                if (threeDOperateScript.current3DObj != null) {
+                                if (threeDOperateScript.current3DObj != null)
+                                {
                                     threeDOperateScript.current3DObj.gameObject.SetActive(false);
                                 }
                             }
 
                             targetObj = rootObj;
                             mainUIScript.operateObj = targetObj;
+                            InitParam(rootObj, gif.currentGood);
                             //表示此物体可以被拖放
-                            if (gif.currentGood.tags != null && gif.currentGood.tags.Count > 0) {
+                            if (gif.currentGood.tags != null && gif.currentGood.tags.Count > 0)
+                            {
                                 mainUIScript.InitObjectData();
-                                goods = gif.currentGood;
-                                foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>()) {
+                                foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+                                {
                                     tran.gameObject.layer = LayerMask.NameToLayer("temp");
                                 }
                                 isDragging = true;
-                            } else {
+                            }
+                            else
+                            {
                                 Utils.SetObjectHighLight(targetObj.gameObject, true, Color.clear);
                             }
                         }
@@ -79,15 +94,21 @@ public class ObjectOperate : MonoBehaviour {
         }
 
 
-        if (Input.GetMouseButtonUp(0)) {
-            if (isDragging) {
-                if (canPlace) {
-                    if (goods.goodType == GoodType.spawnObj) {
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (isDragging)
+            {
+                if (canPlace)
+                {
+                    if (goods.goodType == GoodType.spawnObj)
+                    {
                         mainUIScript.operateObj = targetObj;
                         mainUIScript.setParamPanel.SetActive(true);
                         mainUIScript.InitObjectData();
                         RecoveryRaycast();
-                    } else if (goods.goodType == GoodType.changeImg) {
+                    }
+                    else if (goods.goodType == GoodType.changeImg)
+                    {
                         Texture t1 = Resources.Load<Texture>(goods.albedo);
                         Utils.ChangeShaderAlbedo(raycastHit, t1);
                         Texture t2 = Resources.Load<Texture>(goods.normalMap);
@@ -95,14 +116,19 @@ public class ObjectOperate : MonoBehaviour {
                         Texture t3 = Resources.Load<Texture>(goods.occlusion);
                         Utils.ChangeShaderOcclusion(raycastHit, t3);
                         GoodInfo tt = raycastHit.GetComponent<GoodInfo>();
-                        if (tt == null) {
-                            tt = raycastHit.AddComponent<GoodInfo>();
+                        if (tt == null)
+                        {
+                            //tt = raycastHit.AddComponent<GoodInfo>();
+                            //tt.currentGood = goods;
                         }
-                        tt.currentGood = goods;
                     }
-                } else {
-                    if (goods.goodType == GoodType.spawnObj) {
-                        if (targetObj) {
+                }
+                else
+                {
+                    if (goods.goodType == GoodType.spawnObj)
+                    {
+                        if (targetObj)
+                        {
                             Destroy(targetObj.gameObject);
                         }
                         mainUIScript.setParamPanel.SetActive(false);
@@ -116,27 +142,38 @@ public class ObjectOperate : MonoBehaviour {
                 mainUIScript.tipObject.SetActive(false);
             }
         }
-        if (Input.GetMouseButton(0)) {
-            if (isDragging) {
+        if (Input.GetMouseButton(0))
+        {
+            if (isDragging)
+            {
                 RaycastHit hit;
                 Vector3 mousePosition = Input.mousePosition;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 int layerValue = ~(1 << LayerMask.NameToLayer("temp"));
-                if (Physics.Raycast(ray, out hit, 1000, layerValue)) {
+                if (Physics.Raycast(ray, out hit, 1000, layerValue))
+                {
                     //判断是否能放置在此物体上面
                     string tag = hit.transform.tag;
+                    print(hit.transform.name + " = " + hit.transform.tag);
                     canPlace = goods.tags.Contains(tag);
-                    if (canPlace) {
+                    if (canPlace)
+                    {
                         mainUIScript.tipObject.SetActive(false);
-                        if (goods.goodType == GoodType.spawnObj) {
+                        if (goods.goodType == GoodType.spawnObj)
+                        {
                             Utils.SetObjectHighLight(targetObj.gameObject, true, Color.clear);
                             SetPosition(hit.point, tag);
-                        } else {
+                        }
+                        else
+                        {
                             raycastHit = hit.transform.gameObject;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         mainUIScript.tipObject.SetActive(true);
-                        if (goods.goodType == GoodType.spawnObj) {
+                        if (goods.goodType == GoodType.spawnObj)
+                        {
                             Utils.SetObjectHighLight(targetObj.gameObject, true, Color.red);
                             SetPosition(hit.point, tag);
                         }
@@ -144,23 +181,36 @@ public class ObjectOperate : MonoBehaviour {
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
-            if (targetObj) {
-                if (targetObj.tag.Contains("TV")) {
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (targetObj)
+            {
+                if (targetObj.tag.Contains("TV"))
+                {
                     PlayMovie pm = targetObj.GetComponentInChildren<PlayMovie>();
-                    if (pm) {
-                        if (pm.playStatus == PlayStatus.pause) {
+                    if (pm)
+                    {
+                        if (pm.playStatus == PlayStatus.pause)
+                        {
                             pm.Play();
-                        } else if (pm.playStatus == PlayStatus.playing) {
+                        }
+                        else if (pm.playStatus == PlayStatus.playing)
+                        {
                             pm.Pause();
                         }
                     }
-                } else if (targetObj.tag.Contains("Light")) {
+                }
+                else if (targetObj.tag.Contains("Light"))
+                {
                     PlayLight pl = targetObj.GetComponentInChildren<PlayLight>();
-                    if (pl) {
-                        if (!pl.isLigt) {
+                    if (pl)
+                    {
+                        if (!pl.isLigt)
+                        {
                             pl.TurnOn();
-                        } else {
+                        }
+                        else
+                        {
                             pl.TurnOff();
                         }
                     }
@@ -174,6 +224,9 @@ public class ObjectOperate : MonoBehaviour {
 
     [HideInInspector]
     public bool isDragging = false;
+    //是否是内置物体
+    [HideInInspector]
+    public bool isInGood = false;
     bool canPlace = false;
 
     [HideInInspector]
@@ -182,14 +235,18 @@ public class ObjectOperate : MonoBehaviour {
     GoodType goodType = GoodType.spawnObj;
     float centerY = 0;
     float topY = 0;
-    public void InitParam(Transform toperateObj, Goods tgoods) {
+    public void InitParam(Transform toperateObj, Goods tgoods)
+    {
         targetObj = toperateObj;
         goods = tgoods;
         goodType = tgoods.goodType;
 
-        if (toperateObj) {
+        isInGood = !(goods.tags != null && goods.tags.Count > 0);
+        if (toperateObj)
+        {
             GoodInfo ttgoodInfo = toperateObj.GetComponent<GoodInfo>();
-            if (ttgoodInfo != null) {
+            if (ttgoodInfo != null)
+            {
                 topY = ttgoodInfo.topY;
                 centerY = ttgoodInfo.centerY;
             }
@@ -197,43 +254,62 @@ public class ObjectOperate : MonoBehaviour {
     }
 
 
-    public void CloseHighLight() {
-        if (targetObj) {
+    public void CloseHighLight()
+    {
+        if (targetObj)
+        {
             Utils.SetObjectHighLight(targetObj.gameObject, false, Color.clear);
         }
     }
 
-    public void IgnoreRaycast() {
-        if (targetObj != null) {
-            foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>()) {
+    public void IgnoreRaycast()
+    {
+        if (targetObj != null)
+        {
+            foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+            {
                 tran.gameObject.layer = LayerMask.NameToLayer("temp");
             }
         }
     }
 
-    public void RecoveryRaycast() {
-        if (targetObj != null) {
-            foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>()) {
+    public void RecoveryRaycast()
+    {
+        if (targetObj != null)
+        {
+            foreach (Transform tran in targetObj.GetComponentsInChildren<Transform>())
+            {
                 tran.gameObject.layer = LayerMask.NameToLayer("Default");
             }
         }
     }
 
-    public void SetPosition(Vector3 point, string hitTag) {
+    public void SetPosition(Vector3 point, string hitTag)
+    {
         if (hitTag == "topwall" && goods.tags.Contains(hitTag))//表示是吊灯
         {
             point.y = point.y - (topY - centerY);
-        } else {
+        }
+        else if (hitTag == "ceiwall" && goods.tags.Contains(hitTag))//表示是吊灯
+        {
+            print(point);
+        }
+        else
+        {
             point.y = centerY + point.y;
         }
         targetObj.position = point;
     }
 
     Texture textureBG = null;
-    private void OnGUI() {
-        if (isDragging) {
-            if (goodType == GoodType.changeImg) {
-                if (textureBG == null) {
+    private void OnGUI()
+    {
+        if (isDragging)
+        {
+            if (goodType == GoodType.changeImg)
+            {
+                if (textureBG == null)
+                {
                     textureBG = Resources.Load<Texture>(goods.spriteName);
                 }
                 Vector3 mousePosition = Input.mousePosition;

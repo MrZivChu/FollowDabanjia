@@ -99,10 +99,13 @@ public class Utils : MonoBehaviour
         MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
-            Material material = meshRenderer.material;
-            if (material != null)
+            Material[] material = meshRenderer.materials;
+            if (material != null && material.Length > 0)
             {
-                material.SetTexture("_MainTex", texture);
+                for (int i = 0; i < material.Length; i++)
+                {
+                    material[i].SetTexture("_MainTex", texture);
+                }
             }
         }
     }
@@ -112,10 +115,13 @@ public class Utils : MonoBehaviour
         MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
-            Material material = meshRenderer.material;
-            if (material != null)
+            Material[] material = meshRenderer.materials;
+            if (material != null && material.Length > 0)
             {
-                material.SetTexture("_BumpMap", texture);
+                for (int i = 0; i < material.Length; i++)
+                {
+                    material[i].SetTexture("_BumpMap", texture);
+                }
             }
         }
     }
@@ -125,20 +131,29 @@ public class Utils : MonoBehaviour
         MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
-            Material material = meshRenderer.material;
-            if (material != null)
+            Material[] material = meshRenderer.materials;
+            if (material != null && material.Length > 0)
             {
-                material.SetTexture("_OcclusionMap", texture);
+                for (int i = 0; i < material.Length; i++)
+                {
+                    material[i].SetTexture("_OcclusionMap", texture);
+                }
             }
         }
     }
 
-    public static void ChangeShaderEmission(GameObject target, Color newColor) {
+    public static void ChangeShaderEmission(GameObject target, Color newColor)
+    {
         MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
-        if (meshRenderer != null) {
-            Material material = meshRenderer.material;
-            if (material != null) {
-                material.SetColor("_EmissionColor", newColor);
+        if (meshRenderer != null)
+        {
+            Material[] material = meshRenderer.materials;
+            if (material != null && material.Length > 0)
+            {
+                for (int i = 0; i < material.Length; i++)
+                {
+                    material[i].SetColor("_EmissionColor", newColor);
+                }
             }
         }
     }

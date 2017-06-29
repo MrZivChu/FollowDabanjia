@@ -14,7 +14,6 @@ public class ThreeDOperate : MonoBehaviour
 {
     public ObjectOperate objectOperate;
 
-    public Camera theCamera;
     public MainUI mainUI;
 
     public Transform scaleRight;
@@ -64,7 +63,7 @@ public class ThreeDOperate : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (objectOperate.targetObj)
+            if (objectOperate.targetObj && !objectOperate.isInGood)
             {
                 if (pre3DObj != null)
                 {
@@ -101,7 +100,7 @@ public class ThreeDOperate : MonoBehaviour
         {
             RaycastHit hit;
             Vector3 mousePosition = Input.mousePosition;
-            Ray ray = theCamera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             int layerValue = 1 << LayerMask.NameToLayer("arrow");
             if (Physics.Raycast(ray, out hit, 1000, layerValue))
             {

@@ -87,8 +87,9 @@ public class SelectRoom : MonoBehaviour
         cell.SetActive(true);
     }
 
-    public void SelectRoomOK()
+    public void SelectRoomOK(string roomPrefabPath)
     {
+        SpawnRoom.roomPrefabPath = roomPrefabPath;
         Loading.index = 2;
         SceneManager.LoadScene("Loading");
     }

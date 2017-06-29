@@ -30,6 +30,18 @@ enum ClickTransfromType
     addSZ = 18
 }
 
+class lableParentClass
+{
+    public string parentName;
+    public List<labelNode> childs;
+}
+
+class labelNode
+{
+    public string key;
+    public Dictionary<string, List<Goods>> dic;
+}
+
 public class MainUI : MonoBehaviour
 {
     public GameObject tipObject;
@@ -87,14 +99,12 @@ public class MainUI : MonoBehaviour
     public Button yRotateAdd;
     public InputField yRotateInputField;
 
-
     public Button zRotateReduce;
     public Button zRotateAdd;
     public InputField zRotateInputField;
 
     ClickTransfromType clickTransfromType = ClickTransfromType.initial;
-
-    Dictionary<string, List<Goods>> goodsDic = new Dictionary<string, List<Goods>>();
+    List<lableParentClass> lableClassList = new List<lableParentClass>();
 
     bool isLeaveShowGoodDetailObject = false;
     private void Start()
@@ -156,84 +166,131 @@ public class MainUI : MonoBehaviour
         TextAsset textAsset = Resources.Load<TextAsset>("goods");
         string content = textAsset.text;
         JsonData res = JsonMapper.ToObject(content);
+
         if (res != null && res.Count > 0)
         {
+            lableParentClass lc = null;
             for (int i = 0; i < res.Count; i++)
             {
+                lc = new lableParentClass();
                 JsonData parentJD = res[i];
+                lc.parentName = parentJD["RootName"].ToString();
+                parentJD = parentJD["ChildLabels"];
                 if (parentJD != null && parentJD.Count > 0)
                 {
-                    //存放对应的家具预设的文件夹名称
-                    string DirecName = parentJD["directName"].ToString();
-                    parentJD = parentJD["goods"];
-                    for (int j = 0; j < parentJD.Count; j++)
+                    lc.childs = new List<labelNode>();
+                    labelNode ln = null;
+                    for (int q = 0; q < parentJD.Count; q++)
                     {
-                        JsonData childJD = parentJD[j];
-                        if (childJD != null)
+                        JsonData tt = parentJD[q];
+                        string typeName = tt["TypeName"].ToString();
+                        ln = new labelNode();
+                        ln.key = typeName;
+                        ln.dic = new Dictionary<string, List<Goods>>();
+                        ln.dic[typeName] = new List<Goods>();
+                        tt = tt["goods"];
+                        for (int j = 0; j < tt.Count; j++)
                         {
-                            Goods good = new Goods();
-                            good.id = childJD["id"].ToString();
-                            good.name = childJD["name"].ToString();
-                            good.home = childJD["home"].ToString();
-                            good.goodType = (GoodType)(Convert.ToInt32(childJD["goodType"].ToString()));
-                            if (good.goodType == GoodType.spawnObj)
+                            JsonData childJD = tt[j];
+                            if (childJD != null)
                             {
-                                good.prefabName = childJD["prefabName"].ToString();
+                                Goods good = new Goods();
+                                good.id = childJD["id"].ToString();
+                                good.name = childJD["name"].ToString();
+                                good.home = childJD["home"].ToString();
+                                good.goodType = (GoodType)(Convert.ToInt32(childJD["goodType"].ToString()));
                                 good.spriteName = childJD["spriteName"].ToString();
-                            }
-                            else
-                            {
-                                good.albedo = childJD["albedo"].ToString();
-                                good.normalMap = childJD["normalMap"].ToString();
-                                good.occlusion = childJD["occlusion"].ToString();
-                            }
-                            good.chang = childJD["chang"].ToString();
-                            good.kuan = childJD["kuan"].ToString();
-                            good.gao = childJD["gao"].ToString();
-
-                            JsonData jd = childJD["tags"];
-                            if (jd != null && jd.Count > 0)
-                            {
-                                good.tags = new List<string>();
-                                for (int m = 0; m < jd.Count; m++)
+                                if (good.goodType == GoodType.spawnObj)
                                 {
-                                    good.tags.Add(jd[m].ToString());
+                                    good.prefabName = childJD["prefabName"].ToString();
                                 }
-                            }
+                                else
+                                {
+                                    good.albedo = childJD["albedo"].ToString();
+                                    good.normalMap = childJD["normalMap"].ToString();
+                                    good.occlusion = childJD["occlusion"].ToString();
+                                }
+                                good.chang = childJD["chang"].ToString();
+                                good.kuan = childJD["kuan"].ToString();
+                                good.gao = childJD["gao"].ToString();
 
-                            if (goodsDic.ContainsKey(DirecName))
-                            {
-                                goodsDic[DirecName].Add(good);
-                            }
-                            else
-                            {
-                                goodsDic[DirecName] = new List<Goods>() { good };
+                                JsonData jd = childJD["tags"];
+                                if (jd != null && jd.Count > 0)
+                                {
+                                    good.tags = new List<string>();
+                                    for (int m = 0; m < jd.Count; m++)
+                                    {
+                                        good.tags.Add(jd[m].ToString());
+                                    }
+                                }
+                                ln.dic[typeName].Add(good);
                             }
                         }
+                        lc.childs.Add(ln);
                     }
                 }
+                lableClassList.Add(lc);
             }
         }
+        Utils.SpawnCellForTable(parentBtnsGroup, lableClassList, SpawnOrUpdateParentLabels);
+    }
 
-        List<string> furnitureNames = new List<string>() { "Fool", "Curtains", "KitchenSet", "Lamps", "Paintings", "Pillows", "SofaChair", "TablesTV" };
-        for (int m = 0; m < TopButtonList.Count; m++)
+    void SpawnOrUpdateParentLabels(GameObject go, lableParentClass lc, bool isSpawn, int index)
+    {
+        GameObject cell = go;
+        if (isSpawn)
         {
-            List<Goods> tt = new List<Goods>();
-            if (m >= 0 && m < furnitureNames.Count)
+            UnityEngine.Object obj = Resources.Load("SelectGoodsUpBtn");
+            if (obj)
             {
-                if (goodsDic.ContainsKey(furnitureNames[m]))
-                {
-                    tt = goodsDic[furnitureNames[m]];
-                }
+                cell = Instantiate(obj) as GameObject;
+                cell.transform.parent = go.transform;
             }
-            EventTriggerListener.Get(TopButtonList[m].gameObject, tt).onClick = ShowGoods;
-            if (m == 0)
-            {
-                TopButtonList[0].GetComponent<Toggle>().isOn = true;
-                ShowGoods(TopButtonList[m].gameObject, tt);
-            }
+        }
+        cell.GetComponent<Toggle>().group = parentBtnsGroup.GetComponent<ToggleGroup>();
+        cell.GetComponentInChildren<Text>().text = lc.parentName;
+        cell.transform.localScale = Vector3.one;
+        cell.SetActive(true);
+        EventTriggerListener.Get(cell).onClick = (obj, param) =>
+        {
+            Utils.SpawnCellForTable(childBtnsGroup, lc.childs, SpawnOrUpdateChildLabels);
+        };
+        if (index == 0)
+        {
+            cell.GetComponent<Toggle>().isOn = true;
+            Utils.SpawnCellForTable(childBtnsGroup, lc.childs, SpawnOrUpdateChildLabels);
         }
     }
+
+    void SpawnOrUpdateChildLabels(GameObject go, labelNode lcc, bool isSpawn, int index)
+    {
+        GameObject cell = go;
+        if (isSpawn)
+        {
+            UnityEngine.Object obj = Resources.Load("SelectGoodsCenterBtn");
+            if (obj)
+            {
+                cell = Instantiate(obj) as GameObject;
+                cell.transform.parent = go.transform;
+            }
+        }
+        cell.GetComponent<Toggle>().group = childBtnsGroup.GetComponent<ToggleGroup>();
+        cell.GetComponentInChildren<Text>().text = lcc.key;
+        cell.transform.localScale = Vector3.one;
+        cell.SetActive(true);
+        EventTriggerListener.Get(cell).onClick = (obj, param) =>
+        {
+            ShowGoods(null, lcc.dic[lcc.key]);
+        };
+        if (index == 0)
+        {
+            cell.GetComponent<Toggle>().isOn = true;
+            ShowGoods(null, lcc.dic[lcc.key]);
+        }
+    }
+    public Transform parentBtnsGroup;
+    public Transform childBtnsGroup;
+
 
     public Canvas canvas;
     float addSpanValue = 0.5f;
@@ -876,13 +933,19 @@ public class MainUI : MonoBehaviour
             orignalPosition = Input.mousePosition;
         };
 
+        bool isStartDrag = false;
+        EventTriggerListener.Get(cell, data).onBeginDrag = (tgo, tdata) =>
+        {
+            isStartDrag = true;
+        };
         EventTriggerListener.Get(cell, data).onDrag = (tgo, tdata) =>
         {
             Vector3 currentPosition = Input.mousePosition;
-            if (currentPosition.y - orignalPosition.y > 10)
+            if (currentPosition.y - orignalPosition.y > 10 && isStartDrag)
             {
+                isStartDrag = false;
                 //关闭添加家具的面板
-                AddGoodsPanel.SetActive(false);
+                //AddGoodsPanel.SetActive(false);
                 //关闭提示"不能放置此处"的提示信息
                 tipObject.SetActive(false);
                 //关闭对象的高亮
@@ -910,6 +973,7 @@ public class MainUI : MonoBehaviour
                         {
                             goodInfo = dragObject.AddComponent<GoodInfo>();
                         }
+                        goodInfo.rootObj = dragObject;
                         goodInfo.currentGood = tgood;
 
                         //获取对象的中心点和上顶点
@@ -934,6 +998,7 @@ public class MainUI : MonoBehaviour
             }
         };
         cell.GetComponent<Image>().sprite = Resources.Load<Sprite>(data.spriteName);
+        cell.transform.localScale = Vector3.one;
         cell.SetActive(true);
     }
 }
