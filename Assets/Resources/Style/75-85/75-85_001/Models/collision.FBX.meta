@@ -1,0 +1,198 @@
+fileFormatVersion: 2
+guid: 16e402aee2bfbc54dabeb26b9e1b2374
+timeCreated: 1498096462
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: collision01
+    100004: collision02
+    100006: collision03
+    100008: collision04
+    100010: collision05
+    100012: collision06
+    100014: collision07
+    100016: collision08
+    100018: collision09
+    100020: collision10
+    100022: collision11
+    100024: collision12
+    100026: collision13
+    100028: collision14
+    100030: collision15
+    100032: collision16
+    100034: collision17
+    100036: collision18
+    100038: collision19
+    100040: collision20
+    100042: collision21
+    100044: collision22
+    100046: collision23
+    100048: collision24
+    100050: collision25
+    400000: //RootNode
+    400002: collision01
+    400004: collision02
+    400006: collision03
+    400008: collision04
+    400010: collision05
+    400012: collision06
+    400014: collision07
+    400016: collision08
+    400018: collision09
+    400020: collision10
+    400022: collision11
+    400024: collision12
+    400026: collision13
+    400028: collision14
+    400030: collision15
+    400032: collision16
+    400034: collision17
+    400036: collision18
+    400038: collision19
+    400040: collision20
+    400042: collision21
+    400044: collision22
+    400046: collision23
+    400048: collision24
+    400050: collision25
+    2300000: collision01
+    2300002: collision02
+    2300004: collision03
+    2300006: collision04
+    2300008: collision05
+    2300010: collision06
+    2300012: collision07
+    2300014: collision08
+    2300016: collision09
+    2300018: collision10
+    2300020: collision11
+    2300022: collision12
+    2300024: collision13
+    2300026: collision14
+    2300028: collision15
+    2300030: collision16
+    2300032: collision17
+    2300034: collision18
+    2300036: collision19
+    2300038: collision20
+    2300040: collision21
+    2300042: collision22
+    2300044: collision23
+    2300046: collision24
+    2300048: collision25
+    3300000: collision01
+    3300002: collision02
+    3300004: collision03
+    3300006: collision04
+    3300008: collision05
+    3300010: collision06
+    3300012: collision07
+    3300014: collision08
+    3300016: collision09
+    3300018: collision10
+    3300020: collision11
+    3300022: collision12
+    3300024: collision13
+    3300026: collision14
+    3300028: collision15
+    3300030: collision16
+    3300032: collision17
+    3300034: collision18
+    3300036: collision19
+    3300038: collision20
+    3300040: collision21
+    3300042: collision22
+    3300044: collision23
+    3300046: collision24
+    3300048: collision25
+    4300000: collision14
+    4300002: collision11
+    4300004: collision17
+    4300006: collision01
+    4300008: collision22
+    4300010: collision15
+    4300012: collision19
+    4300014: collision12
+    4300016: collision13
+    4300018: collision02
+    4300020: collision18
+    4300022: collision16
+    4300024: collision21
+    4300026: collision24
+    4300028: collision05
+    4300030: collision10
+    4300032: collision20
+    4300034: collision23
+    4300036: collision25
+    4300038: collision09
+    4300040: collision06
+    4300042: collision03
+    4300044: collision07
+    4300046: collision08
+    4300048: collision04
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
