@@ -89,6 +89,18 @@
 							"gao":"500",
 							"tags":["terrain"],
 							"goodType":"1"              
+						  },
+					"4" : {
+							"id": "1",
+							"name": "电灯1",
+							"home": "无锡电器制造有限公司",
+							"prefabName": "zhuwenhai/deng1",
+							"spriteName": "zhuwenhai/deng1",
+							"chang":"200",      
+							"kuan":"7000",      
+							"gao":"500",
+							"tags":["terrain"],
+							"goodType":"1"              
 						  }
 					}
 			},
@@ -163,20 +175,6 @@
 		   "TypeName":"墙纸",
 			"goods":{
 					  "1" : {
-							  "id": "1",
-							  "name": "电器1",
-							  "home": "无锡电器制造有限公司",
-							  "spriteName": "Wall/1164525363",
-							  "albedo": "Wall/1164525363",
-							  "normalMap": "",
-							  "occlusion": "",
-							  "chang":"100",      
-							  "kuan":"1000",      
-							  "gao":"100",
-							  "tags":["ceiwall"],
-							  "goodType":"2"            
-							},
-					  "2" : {
 								"id": "2",
 								"name": "电器2",
 								"home": "南京电器制造有限公司",
@@ -190,7 +188,7 @@
 								"tags":["ceiwall"],
 								"goodType":"2"                
 							  },
-					  "3" : {
+					  "2" : {
 								"id": "3",
 								"name": "电器3",
 								"home": "苏州电器制造有限公司",
@@ -204,7 +202,7 @@
 								"tags":["ceiwall"],
 								"goodType":"2"             
 							  },
-					  "4" : {
+					  "3" : {
 								"id": "3",
 								"name": "电器3",
 								"home": "苏州电器制造有限公司",
@@ -216,7 +214,7 @@
 								"kuan":"1000",      
 								"gao":"100",
 								"tags":["ceiwall"],
-								"goodType":"2"             
+								"goodType":"2"
 							  }
 					 }
 			}

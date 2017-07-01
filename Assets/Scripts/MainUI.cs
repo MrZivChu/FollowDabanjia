@@ -659,13 +659,13 @@ public class MainUI : MonoBehaviour
 
     void BackBtns(GameObject go, object param)
     {
-        Loading.index = 1;
+        Loading.index = 2;
         SceneManager.LoadScene("Loading");
     }
 
     void onChangeRoomPanel(GameObject go, object param)
     {
-        Loading.index = 1;
+        Loading.index = 2;
         SceneManager.LoadScene("Loading");
     }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Diagnostics;
 
 public class Login : MonoBehaviour
 {
@@ -24,7 +25,7 @@ public class Login : MonoBehaviour
     {
         string p1 = phone.text;
         string p2 = pwd.text;
-        Loading.index = 1;
+        Loading.index = 2;
         SceneManager.LoadScene("Loading");
     }
 }
