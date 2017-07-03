@@ -54,6 +54,7 @@ public class ObjectOperate : MonoBehaviour
                         //if (rootObj != null && rootObj.CompareTag("jiaju"))
                         if (rootObj != null)
                         {
+                            gif = rootObj.GetComponent<GoodInfo>();
                             //关闭上一个选中对象的选中效果
                             if (targetObj)
                             {

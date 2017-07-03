@@ -928,15 +928,11 @@ public class MainUI : MonoBehaviour
         }
 
         Vector3 orignalPosition = Vector3.zero;
-        EventTriggerListener.Get(cell, data).onBeginDrag = (tgo, tdata) =>
-        {
-            orignalPosition = Input.mousePosition;
-        };
-
         bool isStartDrag = false;
         EventTriggerListener.Get(cell, data).onBeginDrag = (tgo, tdata) =>
         {
             isStartDrag = true;
+            orignalPosition = Input.mousePosition;
         };
         EventTriggerListener.Get(cell, data).onDrag = (tgo, tdata) =>
         {
