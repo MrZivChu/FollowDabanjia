@@ -23,6 +23,12 @@ public class SelectRoom : MonoBehaviour
     public List<GameObject> BtnList = new List<GameObject>();
     Dictionary<int, List<Room>> dic = new Dictionary<int, List<Room>>();
 
+
+    public Toggle tog1;
+    public Toggle tog2;
+    public GameObject p1;
+    public GameObject p2;
+
     private void Start()
     {
         for (int i = 0; i < BtnList.Count; i++)
@@ -48,6 +54,14 @@ public class SelectRoom : MonoBehaviour
             main1.SetActive(true);
             gameObject.SetActive(false);
         };
+
+
+        tog1.onValueChanged.AddListener((isOn) => {
+            p1.SetActive(isOn);
+        });
+        tog2.onValueChanged.AddListener((isOn) => {
+            p2.SetActive(isOn);
+        });
     }
 
     List<Room> clickListRoom = new List<Room>();

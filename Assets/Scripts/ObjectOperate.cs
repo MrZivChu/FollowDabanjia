@@ -22,7 +22,6 @@ public class ObjectOperate : MonoBehaviour
     [HideInInspector]
     public bool canOperate = true;
 
-
     void Update()
     {
         if (!canOperate)
@@ -42,7 +41,6 @@ public class ObjectOperate : MonoBehaviour
             else//当前没有触摸在UI上
             {
                 RaycastHit hit;
-                Vector3 mousePosition = Input.mousePosition;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit))
                 {
@@ -145,10 +143,10 @@ public class ObjectOperate : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
+            Vector3 mousePosition = Input.mousePosition;
             if (isDragging)
             {
                 RaycastHit hit;
-                Vector3 mousePosition = Input.mousePosition;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 int layerValue = ~(1 << LayerMask.NameToLayer("temp"));
                 if (Physics.Raycast(ray, out hit, 1000, layerValue))
