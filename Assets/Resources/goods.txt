@@ -64,7 +64,7 @@
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
-									"tags":["ceiwall"],
+									"tags":["ceiwall","topwall"],
 									"goodType":"2"                
 								},
 						"2" : {
@@ -78,7 +78,7 @@
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
-									"tags":["ceiwall"],
+									"tags":["ceiwall","topwall"],
 									"goodType":"2"             
 								},
 					    "3" : {
@@ -92,7 +92,7 @@
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
-									"tags":["ceiwall"],
+									"tags":["ceiwall","topwall"],
 									"goodType":"2"
 								}
 				}
@@ -128,6 +128,30 @@
 									"gao":"500",
 									"tags":["terrain"],
 									"goodType":"1"              
+						    },
+						    "3" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "xiaohuihui/Mesh734",
+									"spriteName": "room1Image/QQ截图20170705165407",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["terrain"],
+									"goodType":"1"              
+						    },
+						    "4" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "xiaohuihui/植物",
+									"spriteName": "room1Image/QQ截图20170705165502",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["terrain"],
+									"goodType":"1"              
 						    }
 				}
 			},
@@ -143,7 +167,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"2" : {
@@ -155,7 +179,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"
 							},              
 							"3" : {
@@ -167,7 +191,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"4" : {
@@ -179,12 +203,77 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 						    }
 				}
 			},
 			"3": {
+				"TypeName":"壁画",
+				"goods":{
+						   "1" : {
+								   	"id": "1",
+								  	"name": "电灯1",
+								  	"home": "无锡电器制造有限公司",
+								  	"prefabName": "zhuwenhai/装饰001",
+								  	"spriteName": "room1Image/装饰001",
+								  	"chang":"200",      
+								  	"kuan":"7000",      
+								  	"gao":"500",
+								  	"tags":["ceiwall"],
+								  	"goodType":"1"              
+							},
+							"2" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "zhuwenhai/装饰005",
+									"spriteName": "room1Image/装饰005",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["ceiwall"],
+									"goodType":"1"              
+						    },
+						    "3" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "zhuwenhai/装饰画002",
+									"spriteName": "room1Image/装饰画002",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["ceiwall"],
+									"goodType":"1"              
+						    },
+						    "4" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "zhuwenhai/装饰画003",
+									"spriteName": "room1Image/QQ截图20170705101124",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["ceiwall"],
+									"goodType":"1"              
+						    },
+						    "5" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "zhuwenhai/装饰003",
+									"spriteName": "room1Image/QQ截图20170705101255",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["ceiwall"],
+									"goodType":"1"              
+						    }
+				}
+			},
+			"4": {
 				"TypeName":"其他",
 				"goods":{
 							"1" : {
@@ -196,7 +285,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"2" : {
@@ -208,7 +297,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"
 							},              
 							"3" : {
@@ -220,7 +309,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"4" : {
@@ -232,7 +321,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"5" : {
@@ -244,7 +333,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"6" : {
@@ -256,7 +345,7 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							},
 							"7" : {
@@ -268,7 +357,43 @@
 									"chang":"200",      
 									"kuan":"7000",      
 									"gao":"500",
-									"tags":["terrain"],
+									"tags":["terrain","ontable"],
+									"goodType":"1"              
+							},
+							"8" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "zhuwenhai/Ice Sculpture 3",
+									"spriteName": "room1Image/QQ截图20170705162230",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["terrain","ontable"],
+									"goodType":"1"              
+							},
+							"9" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "xiaohuihui/花瓶",
+									"spriteName": "room1Image/QQ截图20170705165619",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["terrain","ontable"],
+									"goodType":"1"              
+							},
+							"9" : {
+									"id": "1",
+									"name": "电灯1",
+									"home": "无锡电器制造有限公司",
+									"prefabName": "xiaohuihui/花盆",
+									"spriteName": "room1Image/QQ截图20170705165700",
+									"chang":"200",      
+									"kuan":"7000",      
+									"gao":"500",
+									"tags":["terrain","ontable"],
 									"goodType":"1"              
 							}
 				}
@@ -364,6 +489,23 @@
 							"goodType":"1"        
 						}
 				}
+			},
+			"4": {
+		   		"TypeName":"电视墙",
+				"goods":{
+					  	"1" : {
+							"id": "1",
+							"name": "电灯1",
+							"home": "无锡电器制造有限公司",
+							"prefabName": "zhuwenhai/电视墙001",
+							"spriteName": "room1Image/QQ截图20170705112504",
+							"chang":"200",      
+							"kuan":"7000",      
+							"gao":"500",
+							"tags":["terrain"],
+							"goodType":"1"        
+						}
+				}
 			}
 		}
 	},
@@ -435,7 +577,7 @@
 								"chang":"200",      
 								"kuan":"7000",      
 								"gao":"500",
-								"tags":["terrain"],
+								"tags":["terrain","ontable"],
 								"goodType":"1"              
 					    },
 						"3" : {
@@ -447,7 +589,7 @@
 								"chang":"200",      
 								"kuan":"7000",      
 								"gao":"500",
-								"tags":["terrain"],
+								"tags":["terrain","ontable"],
 								"goodType":"1"              
 							}
 				}

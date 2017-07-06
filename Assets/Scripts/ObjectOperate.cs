@@ -12,6 +12,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityStandardAssets.CrossPlatformInput;
+using uTools;
 
 public class ObjectOperate : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class ObjectOperate : MonoBehaviour
     //当打开3D辅助工具的时候，对象是不好被操作的，也就是不好被拖动的，因为两者是冲突的
     [HideInInspector]
     public bool canOperate = true;
+
+    Vector3 downPosition = Vector3.zero;
 
     void Update()
     {
@@ -41,7 +44,8 @@ public class ObjectOperate : MonoBehaviour
             else//当前没有触摸在UI上
             {
                 RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                downPosition = Input.mousePosition;
+                Ray ray = Camera.main.ScreenPointToRay(downPosition);
                 if (Physics.Raycast(ray, out hit))
                 {
                     print(hit.transform.name);
@@ -82,7 +86,7 @@ public class ObjectOperate : MonoBehaviour
                                 }
                                 isDragging = true;
                             }
-                            else
+                            //else
                             {
                                 Utils.SetObjectHighLight(targetObj.gameObject, true, Color.clear);
                             }
@@ -97,42 +101,45 @@ public class ObjectOperate : MonoBehaviour
         {
             if (isDragging)
             {
-                if (canPlace)
+                if (Input.mousePosition != downPosition)
                 {
-                    if (goods.goodType == GoodType.spawnObj)
+                    if (canPlace)
                     {
-                        mainUIScript.operateObj = targetObj;
-                        mainUIScript.setParamPanel.SetActive(true);
-                        mainUIScript.InitObjectData();
-                        RecoveryRaycast();
-                    }
-                    else if (goods.goodType == GoodType.changeImg)
-                    {
-                        Texture t1 = Resources.Load<Texture>(goods.albedo);
-                        Utils.ChangeShaderAlbedo(raycastHit, t1);
-                        Texture t2 = Resources.Load<Texture>(goods.normalMap);
-                        Utils.ChangeShaderNormalMap(raycastHit, t2);
-                        Texture t3 = Resources.Load<Texture>(goods.occlusion);
-                        Utils.ChangeShaderOcclusion(raycastHit, t3);
-                        GoodInfo tt = raycastHit.GetComponent<GoodInfo>();
-                        if (tt == null)
+                        if (goods.goodType == GoodType.spawnObj)
                         {
-                            //tt = raycastHit.AddComponent<GoodInfo>();
-                            //tt.currentGood = goods;
+                            mainUIScript.operateObj = targetObj;
+                            mainUIScript.setParamPanel.SetActive(true);
+                            mainUIScript.InitObjectData();
+                        }
+                        else if (goods.goodType == GoodType.changeImg)
+                        {
+                            Texture t1 = Resources.Load<Texture>(goods.albedo);
+                            Utils.ChangeShaderAlbedo(raycastHit, t1);
+                            Texture t2 = Resources.Load<Texture>(goods.normalMap);
+                            Utils.ChangeShaderNormalMap(raycastHit, t2);
+                            Texture t3 = Resources.Load<Texture>(goods.occlusion);
+                            Utils.ChangeShaderOcclusion(raycastHit, t3);
+                            GoodInfo tt = raycastHit.GetComponent<GoodInfo>();
+                            if (tt == null)
+                            {
+                                //tt = raycastHit.AddComponent<GoodInfo>();
+                                //tt.currentGood = goods;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (goods.goodType == GoodType.spawnObj)
+                        {
+                            if (targetObj)
+                            {
+                                Destroy(targetObj.gameObject);
+                            }
+                            mainUIScript.setParamPanel.SetActive(false);
                         }
                     }
                 }
-                else
-                {
-                    if (goods.goodType == GoodType.spawnObj)
-                    {
-                        if (targetObj)
-                        {
-                            Destroy(targetObj.gameObject);
-                        }
-                        mainUIScript.setParamPanel.SetActive(false);
-                    }
-                }
+                RecoveryRaycast();
                 isDragging = false;
                 canPlace = false;
 
@@ -144,7 +151,7 @@ public class ObjectOperate : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Vector3 mousePosition = Input.mousePosition;
-            if (isDragging)
+            if (isDragging && mousePosition != downPosition)
             {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -212,6 +219,14 @@ public class ObjectOperate : MonoBehaviour
                         {
                             pl.TurnOff();
                         }
+                    }
+                }
+                else if (targetObj.tag.Contains("Fanner"))
+                {
+                    uTweenRotation tempuTweenRotation = targetObj.GetComponentInChildren<uTweenRotation>();
+                    if (tempuTweenRotation)
+                    {
+                        tempuTweenRotation.enabled = !tempuTweenRotation.enabled;
                     }
                 }
             }
@@ -289,7 +304,7 @@ public class ObjectOperate : MonoBehaviour
         {
             point.y = point.y - (topY - centerY);
         }
-        else if (hitTag == "ceiwall" && goods.tags.Contains(hitTag))//表示是吊灯
+        else if (hitTag == "ceiwall" && goods.tags.Contains(hitTag))
         {
             print(point);
         }

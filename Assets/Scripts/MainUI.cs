@@ -107,7 +107,10 @@ public class MainUI : MonoBehaviour
     List<lableParentClass> lableClassList = new List<lableParentClass>();
 
     bool isLeaveShowGoodDetailObject = false;
-    private void Start()
+
+    //为了生存保存场景里的对象
+    public static Dictionary<string, Goods> goodsDic = new Dictionary<string, Goods>();
+    private void Awake()
     {
         EventTriggerListener.Get(backBtn.gameObject).onClick = BackBtns;
         EventTriggerListener.Get(changeRoomBtn.gameObject).onClick = onChangeRoomPanel;
@@ -222,6 +225,10 @@ public class MainUI : MonoBehaviour
                                     {
                                         good.tags.Add(jd[m].ToString());
                                     }
+                                }
+                                if (good.prefabName != null)
+                                {
+                                    goodsDic[good.prefabName] = good;
                                 }
                                 ln.dic[typeName].Add(good);
                             }
@@ -625,6 +632,11 @@ public class MainUI : MonoBehaviour
     {
         if (operateObj)
         {
+            GoodInfo tt = operateObj.GetComponent<GoodInfo>();
+            if (tt != null)
+            {
+                SaveScene.DeleteGameObject(tt.currentGood.prefabName, operateObj.gameObject);
+            }
             Destroy(operateObj.gameObject);
             objectOperate.canOperate = true;
             operateObjPanel.SetActive(false);
@@ -984,6 +996,8 @@ public class MainUI : MonoBehaviour
                         objectOperate.IgnoreRaycast();
                         objectOperate.isDragging = true;
                         objectOperate.canOperate = true;
+
+                        SaveScene.AddGameObject(tgood.prefabName, dragObject);
                     }
                 }
                 else if (tgood.goodType == GoodType.changeImg)

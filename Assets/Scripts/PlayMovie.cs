@@ -2,20 +2,23 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public enum PlayType {
+public enum PlayType
+{
     none = 0,
     image = 1,
     mesh = 2
 }
 
-public enum PlayStatus {
+public enum PlayStatus
+{
     none = 0,
     playing = 1,
     stop = 2,
     pause = 3
 }
 
-public class PlayMovie : MonoBehaviour {
+public class PlayMovie : MonoBehaviour
+{
     public MovieTexture movieTexture;
     public PlayType playType = PlayType.none;
     public bool isStartPlay = false;//是否程序运行就开始播放
@@ -23,6 +26,8 @@ public class PlayMovie : MonoBehaviour {
 
     public Image imgae = null;
     public Renderer theRenderer = null;
+
+    public AudioSource audioSource;
 
     [HideInInspector]
     public PlayStatus playStatus = PlayStatus.none;
@@ -33,63 +38,97 @@ public class PlayMovie : MonoBehaviour {
     Texture imageOrignalTexture;
     Texture meshOrignalTexture;
 
-    void Start() {
-        if (movieTexture != null) {
-            if (playType == PlayType.image) {
-                if (imgae != null) {
+    void Start()
+    {
+        if (movieTexture != null)
+        {
+            if (playType == PlayType.image)
+            {
+                if (imgae != null)
+                {
                     imageOrignalTexture = imgae.material.mainTexture;
                     imgae.material.mainTexture = movieTexture;
                 }
-            } else if (playType == PlayType.mesh) {
-                if (theRenderer != null) {
+            }
+            else if (playType == PlayType.mesh)
+            {
+                if (theRenderer != null)
+                {
                     meshOrignalTexture = theRenderer.material.mainTexture;
                     theRenderer.material.mainTexture = movieTexture;
                 }
             }
             movieTexture.loop = loop;
-            if (isStartPlay) {
+            if (isStartPlay)
+            {
                 Play();
-            } else {
+            }
+            else
+            {
                 Pause();
             }
         }
     }
 
-    public void Play() {
-        if (movieTexture != null) {
+    public void Play()
+    {
+        if (movieTexture != null)
+        {
             movieTexture.Play();
             playStatus = PlayStatus.playing;
-            if (theRenderer) {
+            if (theRenderer)
+            {
                 theRenderer.enabled = true;
             }
         }
-    }
-
-    public void Stop() {
-        if (movieTexture != null) {
-            movieTexture.Stop();
-            playStatus = PlayStatus.stop;
+        if (audioSource != null)
+        {
+            audioSource.Play();
         }
     }
 
-    public void Pause() {
-        if (movieTexture != null) {
+    public void Stop()
+    {
+        if (movieTexture != null)
+        {
+            movieTexture.Stop();
+            playStatus = PlayStatus.stop;
+        }
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    public void Pause()
+    {
+        if (movieTexture != null)
+        {
             movieTexture.Pause();
             playStatus = PlayStatus.pause;
-            if (isCloseMesh == true) {
-                if (theRenderer) {
+            if (isCloseMesh == true)
+            {
+                if (theRenderer)
+                {
                     theRenderer.enabled = false;
                 }
             }
         }
+        if (audioSource != null)
+        {
+            audioSource.Pause();
+        }
     }
 
 
-    private void OnDestroy() {
-        if (imgae != null) {
+    private void OnDestroy()
+    {
+        if (imgae != null)
+        {
             imgae.material.mainTexture = imageOrignalTexture;
         }
-        if (theRenderer != null) {
+        if (theRenderer != null)
+        {
             theRenderer.material.mainTexture = meshOrignalTexture;
         }
     }

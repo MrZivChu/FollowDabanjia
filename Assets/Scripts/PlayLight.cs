@@ -9,13 +9,7 @@ public class PlayLight : MonoBehaviour {
     public GameObject baiLight;
     public GameObject heiLight;
 
-    [HideInInspector]
     public bool isLigt = false;
-
-
-    void Start() {
-        isLigt = true;
-    }
 
     public void TurnOn() {
         if (lightObj) {
