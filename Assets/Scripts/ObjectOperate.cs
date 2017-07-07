@@ -18,6 +18,7 @@ public class ObjectOperate : MonoBehaviour
 {
     public MainUI mainUIScript;
     public ThreeDOperate threeDOperateScript;
+    public SaveScene saveScene;
 
     //当打开3D辅助工具的时候，对象是不好被操作的，也就是不好被拖动的，因为两者是冲突的
     [HideInInspector]
@@ -120,6 +121,8 @@ public class ObjectOperate : MonoBehaviour
                             Texture t3 = Resources.Load<Texture>(goods.occlusion);
                             Utils.ChangeShaderOcclusion(raycastHit, t3);
                             GoodInfo tt = raycastHit.GetComponent<GoodInfo>();
+
+                            saveScene.ChangeImage(Utils.GetObjPath(raycastHit), goods.albedo, goods.normalMap, goods.occlusion);
                             if (tt == null)
                             {
                                 //tt = raycastHit.AddComponent<GoodInfo>();
@@ -133,6 +136,7 @@ public class ObjectOperate : MonoBehaviour
                         {
                             if (targetObj)
                             {
+                                saveScene.DeleteGameObject(goods.prefabName, targetObj.gameObject);
                                 Destroy(targetObj.gameObject);
                             }
                             mainUIScript.setParamPanel.SetActive(false);

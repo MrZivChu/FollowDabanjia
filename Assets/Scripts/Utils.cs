@@ -165,4 +165,20 @@ public class Utils : MonoBehaviour
         RectTransform rect = uiObj.transform as RectTransform;
         rect.anchoredPosition = pos;
     }
+
+    private static void GetObjPathHelper(GameObject go)
+    {
+        tempObjPath = "/" + go.name + tempObjPath;
+        if (go.transform.parent != null)
+        {
+            GetObjPathHelper(go.transform.parent.gameObject);
+        }
+    }
+    static string tempObjPath = string.Empty;
+    public static string GetObjPath(GameObject go)
+    {
+        tempObjPath = string.Empty;
+        GetObjPathHelper(go);
+        return tempObjPath;
+    }
 }

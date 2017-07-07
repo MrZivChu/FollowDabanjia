@@ -44,6 +44,8 @@ class labelNode
 
 public class MainUI : MonoBehaviour
 {
+    public SaveScene saveScene;
+
     public GameObject tipObject;
     public ThreeDOperate threeDOperate;
 
@@ -635,7 +637,14 @@ public class MainUI : MonoBehaviour
             GoodInfo tt = operateObj.GetComponent<GoodInfo>();
             if (tt != null)
             {
-                SaveScene.DeleteGameObject(tt.currentGood.prefabName, operateObj.gameObject);
+                saveScene.DeleteGameObject(tt.currentGood.prefabName, operateObj.gameObject);
+                if (tt.currentGood != null)
+                {
+                    if (tt.currentGood.tags == null || tt.currentGood.tags.Count <= 0)
+                    {
+                        saveScene.AddDeleteCantDragObj(Utils.GetObjPath(operateObj.gameObject));
+                    }
+                }
             }
             Destroy(operateObj.gameObject);
             objectOperate.canOperate = true;
@@ -671,12 +680,24 @@ public class MainUI : MonoBehaviour
 
     void BackBtns(GameObject go, object param)
     {
-        Loading.index = 2;
-        SceneManager.LoadScene("Loading");
+        //saveScene.StartSaveScene();
+        //Loading.index = 2;
+        //SceneManager.LoadScene("Loading");
+
+        //gameObject.SetActive(false);
+        StartCoroutine(Photo());
+    }
+
+    IEnumerator Photo()
+    {
+        Application.CaptureScreenshot(Application.streamingAssetsPath + "/Screenshot.png", 0);
+        yield return new WaitForEndOfFrame();
+        gameObject.SetActive(true);
     }
 
     void onChangeRoomPanel(GameObject go, object param)
     {
+        saveScene.StartSaveScene();
         Loading.index = 2;
         SceneManager.LoadScene("Loading");
     }
@@ -997,7 +1018,7 @@ public class MainUI : MonoBehaviour
                         objectOperate.isDragging = true;
                         objectOperate.canOperate = true;
 
-                        SaveScene.AddGameObject(tgood.prefabName, dragObject);
+                        saveScene.AddGameObject(tgood.prefabName, dragObject);
                     }
                 }
                 else if (tgood.goodType == GoodType.changeImg)

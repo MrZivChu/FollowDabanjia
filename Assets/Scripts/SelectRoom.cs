@@ -104,6 +104,7 @@ public class SelectRoom : MonoBehaviour
     public void SelectRoomOK(string roomPrefabPath)
     {
         SpawnRoom.roomPrefabPath = roomPrefabPath;
+        SaveScene.roomPrefabPath = roomPrefabPath;
         Loading.index = 3;
         SceneManager.LoadScene("Loading");
     }
