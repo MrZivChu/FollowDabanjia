@@ -680,19 +680,9 @@ public class MainUI : MonoBehaviour
 
     void BackBtns(GameObject go, object param)
     {
-        //saveScene.StartSaveScene();
-        //Loading.index = 2;
-        //SceneManager.LoadScene("Loading");
-
-        //gameObject.SetActive(false);
-        StartCoroutine(Photo());
-    }
-
-    IEnumerator Photo()
-    {
-        Application.CaptureScreenshot(Application.streamingAssetsPath + "/Screenshot.png", 0);
-        yield return new WaitForEndOfFrame();
-        gameObject.SetActive(true);
+        saveScene.StartSaveScene();
+        Loading.index = 2;
+        SceneManager.LoadScene("Loading");
     }
 
     void onChangeRoomPanel(GameObject go, object param)

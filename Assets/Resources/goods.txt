@@ -10,7 +10,7 @@
 								  	"id": "1",
 								  	"name": "电器1",
 								  	"home": "无锡电器制造有限公司",
-								  	"spriteName": "Fool/M_01cj_mudiban",
+								  	"spriteName": "Fool/M_01cj_mudiban_S",
 								  	"albedo": "Fool/M_01cj_mudiban",
 								  	"normalMap": "Fool/M_01cj_mudiban_NRM",
 								  	"occlusion": "Fool/M_01cj_mudiban_OCC",
@@ -24,7 +24,7 @@
 									"id": "2",
 									"name": "电器2",
 									"home": "南京电器制造有限公司",
-									"spriteName": "Fool/地砖001",
+									"spriteName": "Fool/地砖001_S",
 									"albedo": "Fool/地砖001",
 									"normalMap": "Fool/地砖001_NRM",
 									"occlusion": "Fool/地砖001_OCC",
@@ -38,10 +38,38 @@
 									"id": "3",
 									"name": "电器3",
 									"home": "苏州电器制造有限公司",
-									"spriteName": "Fool/地砖002",
+									"spriteName": "Fool/地砖002_S",
 									"albedo": "Fool/地砖002",
 									"normalMap": "Fool/地砖002_NRM",
 									"occlusion": "Fool/地砖002_OCC",
+									"chang":"100",      
+									"kuan":"1000",      
+									"gao":"100",
+									"tags":["terrain"],
+									"goodType":"2"             
+								},
+							"4" : {
+									"id": "3",
+									"name": "电器3",
+									"home": "苏州电器制造有限公司",
+									"spriteName": "Fool/Floor 2_S",
+									"albedo": "Fool/Floor 2",
+									"normalMap": "Fool/Floor 1 N 1",
+									"occlusion": "",
+									"chang":"100",      
+									"kuan":"1000",      
+									"gao":"100",
+									"tags":["terrain"],
+									"goodType":"2"             
+								},
+							"5" : {
+									"id": "3",
+									"name": "电器3",
+									"home": "苏州电器制造有限公司",
+									"spriteName": "Fool/_Color_A01_3_S",
+									"albedo": "Fool/_Color_A01_3",
+									"normalMap": "Fool/_Color_A01_2_NRM 1",
+									"occlusion": "",
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
@@ -64,7 +92,7 @@
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
-									"tags":["ceiwall","topwall"],
+									"tags":["ceiwall"],
 									"goodType":"2"                
 								},
 						"2" : {
@@ -78,7 +106,7 @@
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
-									"tags":["ceiwall","topwall"],
+									"tags":["ceiwall"],
 									"goodType":"2"             
 								},
 					    "3" : {
@@ -92,7 +120,7 @@
 									"chang":"100",      
 									"kuan":"1000",      
 									"gao":"100",
-									"tags":["ceiwall","topwall"],
+									"tags":["ceiwall"],
 									"goodType":"2"
 								}
 				}
